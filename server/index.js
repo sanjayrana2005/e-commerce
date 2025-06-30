@@ -1,13 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const morgan = require("morgan");
 const helmet = require("helmet");
 require("dotenv").config();
-const { connectDB } = require("./config/connectDB.js")
+const connectDB = require("./config/connectDB.js");
+const userRouter = require("./Routes/userRoute.js")
 
 const app = express();
+
 const PORT = 8000 || process.env.PORT
 
 
@@ -24,8 +26,12 @@ app.use(helmet({
 }));
 
 app.get("/", (req, res) => {
-    res.send("route is runnikl;lkjbng good gg")
-})
+    res.json({
+        message: "route is working " + PORT,
+    });
+});
+
+app.use("/api/user",userRouter);
 
 connectDB()
     .then(() => {

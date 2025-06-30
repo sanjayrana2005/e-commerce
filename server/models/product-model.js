@@ -22,15 +22,15 @@ const productSchema = mongoose.Schema({
     },
     stock: {
         type: Number,
-        default: 0
+        default: null
     },
     price: {
         type: Number,
-        default: 0
+        default: null
     },
     discount: {
         type: Number,
-        default: 0
+        default: null
     },
     discription: {
         type: String,

@@ -37,7 +37,7 @@ const userSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["Active", "Inactive", "Suspende"],
+        enum: ["Active", "Inactive", "Suspended"],
         default: "Active"
     },
     address_details: [
@@ -52,7 +52,7 @@ const userSchema = mongoose.Schema({
             ref: "cartProduct"
         }
     ],
-    orderhistory: [
+    orderHistory: [
         {
             type: mongoose.Schema.ObjectId,
             ref: "order"
@@ -63,7 +63,7 @@ const userSchema = mongoose.Schema({
         default: null
     },
     forgot_password_expiry: {
-        type: String,
+        type: Date,
         default: ""
     },
     role: {
