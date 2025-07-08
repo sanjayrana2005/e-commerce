@@ -12,12 +12,16 @@ dist
 dist-ssr
 *.local
 
+
+# Package manager lock files (optional)
+package-lock.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
-*.suo
+*.suo 
 *.ntvs*
 *.njsproj
 *.sln

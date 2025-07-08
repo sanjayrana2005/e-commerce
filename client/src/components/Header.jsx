@@ -1,24 +1,28 @@
 import React from 'react'
 import images from "../assets/images/index"
 import Search from './Search'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaRegCircleUser } from "react-icons/fa6";
 import useMobie from '../hooks/useMobile';
 import { BsCart4 } from "react-icons/bs";
 
+
 const Header = () => {
   const [isMobile] = useMobie()
   const location = useLocation()
-
   const isSearchPage = location.pathname === "/search"
+  const navigate = useNavigate()
+
+  const redirectToLoginPage = () => {
+    navigate("/login")
+  }
 
   return (
-    <header className='h-24 lg:h-20 lg:shadow-md stickey top-0  flex flex-col justify-center gap-1'>
+    <header className='bg-white h-24 lg:h-20 lg:shadow-md stickey top-0 flex flex-col justify-center gap-1'>
       {
         !(isSearchPage && isMobile) && (
           <div className='container mx-auto flex items-center px-5 lg:px-10 justify-between '>
             {/** logo*/}
-
             <div className='h-full'>
               <Link to={"/"} className='h-full flex justify-center items-center'>
                 <img
@@ -47,22 +51,21 @@ const Header = () => {
 
             {/** login and my cart*/}
             <div className=''>
-            {/* user icon display only in mobile */}
+              {/* user icon display only in mobile */}
               <button className='text-neutral-600 lg:hidden'>
                 <FaRegCircleUser size={26} />
               </button>
 
               {/* Desktop Part */}
-              <div className='hidden lg:block'>
-                <Link to={"login"}>Login</Link>
-                <button>
+              <div className='hidden lg:flex items-center gap-10 '>
+                <button onClickCapture={redirectToLoginPage} className='text-lg px-2'>Login</button>
+                <button className='flex items-center gap-2 bg-green-800 p-3 rounded text-white hover:bg-green-700'>
                   {/* {add to cart icon} */}
-                  <div>
-
+                  <div className='animate-bounce'>
+                    <BsCart4 size={25} />
                   </div>
-                  <div>
-                    <p>1 items</p>
-                    <p>total price</p>
+                  <div className='font-semibold'>
+                    <p>My Cart</p>
                   </div>
                 </button>
               </div>
