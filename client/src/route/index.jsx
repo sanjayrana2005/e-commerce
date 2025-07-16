@@ -7,6 +7,11 @@ import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 import OtpVerification from "../pages/OtpVerification";
 import ResetPassword from "../pages/ResetPassword";
+import UserMenuMobile from "../pages/UserMenuMobile";
+import Dashboard from "../layout/Dashboard";
+import Profile from "../pages/Profile";
+import MyOrders from "../pages/MyOrders";
+import Address from "../pages/Address";
 
 const router = createBrowserRouter([
     {
@@ -26,21 +31,39 @@ const router = createBrowserRouter([
                 element: <Login />
             },
             {
-                path:"register",
-                element:<Register/>
+                path: "register",
+                element: <Register />
             },
             {
-                path:"forgot-password",
-                element:<ForgotPassword/>
+                path: "forgot-password",
+                element: <ForgotPassword />
             },
             {
-                path:"verification-otp",
-                element:<OtpVerification/>
-            },{
-                path:"/reset-password",
-                element:<ResetPassword/>
-            },{
-
+                path: "verification-otp",
+                element: <OtpVerification />
+            }, {
+                path: "reset-password",
+                element: <ResetPassword />
+            }, {
+                path: "user",
+                element: <UserMenuMobile />
+            }, {
+                path: "dashboard",
+                element: <Dashboard />,
+                children: [
+                    {
+                        path: "profile",
+                        element:<Profile/>
+                    },
+                    {
+                        path: "myorder",
+                        element:<MyOrders/>
+                    },
+                    {
+                        path: "address",
+                        element:<Address/>
+                    }
+                ]
             }
 
         ]

@@ -23,8 +23,16 @@ const Header = () => {
     navigate("/login")
   }
 
-  const handleCloseMenu = () =>{
+  const handleCloseMenu = () => {
     setOpenUserMenu(false)
+  }
+
+  const handleMobileUser = () => {
+    if (!user._id) {
+      navigate("/login")
+      return
+    }
+    navigate("/user")
   }
 
   return (
@@ -62,7 +70,7 @@ const Header = () => {
             {/** login and my cart*/}
             <div className=''>
               {/* user icon display only in mobile */}
-              <button className='text-neutral-600 lg:hidden'>
+              <button className='text-neutral-600 lg:hidden' onClick={handleMobileUser}>
                 <FaRegCircleUser size={26} />
               </button>
 
@@ -86,7 +94,7 @@ const Header = () => {
                       {
                         openUserMenu && <div className='absolute right-0 top-12'>
                           <div className='bg-white rounded-md p-4 min-w-52 lg:shadow-lg'>
-                            <UserMenu close={handleCloseMenu}/>
+                            <UserMenu close={handleCloseMenu} />
                           </div>
                         </div>
                       }

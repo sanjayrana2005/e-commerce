@@ -216,6 +216,8 @@ const uploadAvatar = async (req, res) => {
 
         return res.json({
             message: "uploaded image",
+            error:false,
+            success:true,
             data: {
                 _id: userId,
                 avatar: upload.url
@@ -252,16 +254,16 @@ const updateUserDetails = async (req, res) => {
         })
 
         return res.json({
-            message: "upadated user",
+            message: "updated successfully",
             error: false,
-            succes: true,
+            success: true,
             data: updateUser
         })
     } catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,
-            succes: false
+            success: false
         })
     }
 }
@@ -425,7 +427,7 @@ const resetPassword = async (req, res) => {
 
 const refreshToken = async (req, res) => {
     try {
-        const refreshToken = req.cookies.refreshToken || req?.header?.authorization?.split(" ")[1] // [bearer token]
+        const refreshToken = req.cookies.refreshToken || req?.headers?.authorization?.split(" ")[1] // [bearer token]
 
         if (!refreshToken) {
             return res.status(401).json({
