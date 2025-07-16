@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import images from "../assets/images/index"
 import Search from './Search'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaRegCircleUser } from "react-icons/fa6";
 import useMobie from '../hooks/useMobile';
 import { BsCart4 } from "react-icons/bs";
+import { useSelector } from 'react-redux';
+import { GoTriangleDown, GoTriangleUp } from "react-icons/go"
+import UserMenu from './UserMenu';
+
 
 
 const Header = () => {
@@ -12,9 +16,15 @@ const Header = () => {
   const location = useLocation()
   const isSearchPage = location.pathname === "/search"
   const navigate = useNavigate()
+  const user = useSelector((state) => state?.user)
+  const [openUserMenu, setOpenUserMenu] = useState(false)
 
   const redirectToLoginPage = () => {
     navigate("/login")
+  }
+
+  const handleCloseMenu = () =>{
+    setOpenUserMenu(false)
   }
 
   return (
@@ -58,7 +68,34 @@ const Header = () => {
 
               {/* Desktop Part */}
               <div className='hidden lg:flex items-center gap-10 '>
-                <button onClickCapture={redirectToLoginPage} className='text-lg px-2'>Login</button>
+                {
+                  user?._id ? (
+                    <div className='relative'>
+                      <div onClick={() => setOpenUserMenu(prev => !prev)} className='select-none flex items-center gap-1 cursor-pointer'>
+                        <p>Account</p>
+                        {
+                          openUserMenu ?
+                            (
+                              <GoTriangleUp size={25} />
+                            ) :
+                            (
+                              <GoTriangleDown size={25} />
+                            )
+                        }
+                      </div>
+                      {
+                        openUserMenu && <div className='absolute right-0 top-12'>
+                          <div className='bg-white rounded-md p-4 min-w-52 lg:shadow-lg'>
+                            <UserMenu close={handleCloseMenu}/>
+                          </div>
+                        </div>
+                      }
+
+                    </div>
+                  ) : (
+                    <button onClickCapture={redirectToLoginPage} className='text-lg px-2'>Login</button>
+                  )
+                }
                 <button className='flex items-center gap-2 bg-green-800 p-3 rounded text-white hover:bg-green-700'>
                   {/* {add to cart icon} */}
                   <div className='animate-bounce'>

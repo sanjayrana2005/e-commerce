@@ -3,7 +3,8 @@ const {registerUser,verifyEmaiController,loginController,
     logoutController,uploadAvatar, updateUserDetails, 
     forgotPassword,verifyForgotPasswordOtp,
     resetPassword,
-    refreshToken} = require("../controllers/userController")
+    refreshToken,
+    userDetails} = require("../controllers/userController")
 const auth = require("../middleware/auth");
 const upload = require("../middleware/multer");
 
@@ -18,5 +19,6 @@ router.put("/forgot-password",forgotPassword);
 router.put("/verify-forgot-password-otp",verifyForgotPasswordOtp);
 router.put("/reset-password",resetPassword);
 router.post("/refresh-token",refreshToken);
+router.get("/user-details",auth,userDetails)
 
 module.exports = router;

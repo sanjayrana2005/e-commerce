@@ -10,6 +10,7 @@ const forgotPasswordTemplate = require("../utils/forgotPasswordTemplate");
 const jwt = require("jsonwebtoken");
 
 
+
 const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -34,8 +35,6 @@ const registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
 
         const hashPassword = await bcrypt.hash(password, salt);
-        console.log(hashPassword);
-
 
         const newUser = await userModel.create({
             name,
@@ -113,8 +112,8 @@ const loginController = async (req, res) => {
         const user = await userModel.findOne({ email });
 
         if (!user) {
-            returnres.staus.json({
-                message: "user not registered please register",
+            return res.status(400).json({
+                message: "user not registered. Please register",
                 error: true,
                 succes: false
             })
@@ -124,7 +123,7 @@ const loginController = async (req, res) => {
 
         if (!checkPassword) {
             return res.status(400).json({
-                message: "check password",
+                message: "check password or email",
                 error: true,
                 succes: false
             })
@@ -133,6 +132,9 @@ const loginController = async (req, res) => {
         const accesstoken = await generateAccessToken(user._id);
         const refreshtoken = await generateRefreshToken(user._id);
 
+        const updateUser = await userModel.findByIdAndUpdate(user?._id,{
+            last_login_date : new Date()
+        })
         const cookieOption = {
             httpOnly: true,
             secure: true,
@@ -144,7 +146,7 @@ const loginController = async (req, res) => {
         return res.json({
             message: "login successfuly",
             error: false,
-            succes: true,
+            success: true,
             data: {
                 accesstoken,
                 refreshtoken
@@ -189,7 +191,7 @@ const logoutController = async (req, res) => {
         return res.json({
             message: "logout successfully",
             error: false,
-            succes: true
+            success: true
         })
     } catch (error) {
         return res.status(500).json({
@@ -202,7 +204,6 @@ const logoutController = async (req, res) => {
 }
 
 //upload user avatar
-
 const uploadAvatar = async (req, res) => {
     try {
         const userId = req.userId  // auth middleware
@@ -231,9 +232,7 @@ const uploadAvatar = async (req, res) => {
     }
 }
 
-
 //update user details
-
 const updateUserDetails = async (req, res) => {
     try {
         const userId = req.userId  // autth middleware
@@ -268,7 +267,6 @@ const updateUserDetails = async (req, res) => {
 }
 
 // forgot password user not login
-
 const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body
@@ -277,7 +275,7 @@ const forgotPassword = async (req, res) => {
             return res.status(500).json({
                 message: "user does not exists",
                 error: true,
-                succes: false
+                success: false
             })
         }
         const otp = generateOtp()
@@ -298,7 +296,7 @@ const forgotPassword = async (req, res) => {
         return res.json({
             message: "check your Email",
             error: false,
-            succes: true
+            success: true
         })
 
 
@@ -306,13 +304,12 @@ const forgotPassword = async (req, res) => {
         return res.status(500).json({
             message: error.message || error,
             error: true,
-            succes: false,
+            success: false,
         })
     }
 }
 
 //verify forgot otp
-
 const verifyForgotPasswordOtp = async (req, res) => {
     try {
         const { email, otp } = req.body
@@ -354,6 +351,10 @@ const verifyForgotPasswordOtp = async (req, res) => {
 
         // if otp not expire
         //otp === user.forgot_password_otp
+        const updateUser = await userModel.findByIdAndUpdate(user?._id,{
+            forgot_password_otp : "",
+            forgot_password_expiry : ""
+        })
         return res.json({
             message: "Verfiy OTP successfully",
             error: false,
@@ -426,22 +427,22 @@ const refreshToken = async (req, res) => {
     try {
         const refreshToken = req.cookies.refreshToken || req?.header?.authorization?.split(" ")[1] // [bearer token]
 
-        if(!refreshToken){
+        if (!refreshToken) {
             return res.status(401).json({
-                message:"Invalid Token",
-                error:true,
-                success:false,
+                message: "Invalid Token",
+                error: true,
+                success: false,
             })
         }
 
-        const verifyToken = await jwt.verify(refreshToken,process.env
-                            .SECRET_KEY_REFRESH_TOKEN)
+        const verifyToken = await jwt.verify(refreshToken, process.env
+            .SECRET_KEY_REFRESH_TOKEN)
 
-        if(!verifyToken){
+        if (!verifyToken) {
             return res.status(401).json({
-                message:"token is expired",
-                error:true,
-                success:false
+                message: "token is expired",
+                error: true,
+                success: false
             })
         }
         const userId = verifyToken?._id
@@ -454,28 +455,51 @@ const refreshToken = async (req, res) => {
             sameSite: "None"
         }
 
-        res.cookie("accessToken",newAccessToken,cookieOption)
+        res.cookie("accessToken", newAccessToken, cookieOption)
 
         return res.json({
-            message:"New access token generated",
-            error:false,
-            success:true,
-            data:{
-                accessToken :newAccessToken
+            message: "New access token generated",
+            error: false,
+            success: true,
+            data: {
+                accessToken: newAccessToken
             }
         })
 
     } catch (error) {
         res.status(500).json({
-            message:error.message||error,
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// get login user details 
+const userDetails = async (req, res) => {
+    try {
+        const userId = req.userId
+
+        const user = await userModel.findById(userId).select("-password -refresh_token")
+        return res.json({
+            message: "user details",
+            data: user,
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message:"Somethig is wrong",
             error:true,
             success:false
         })
     }
 }
+
+
 module.exports = {
     registerUser, verifyEmaiController,
     loginController, logoutController, uploadAvatar,
     updateUserDetails, forgotPassword, verifyForgotPasswordOtp,
-    resetPassword,refreshToken
+    resetPassword, refreshToken, userDetails
 }

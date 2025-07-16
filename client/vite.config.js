@@ -7,4 +7,9 @@ export default defineConfig({
   plugins: [
     // tailwindcss(),
     react()],
+    
+
+    server: {
+    host: true  // 👈 this allows external devices
+  }
 })
