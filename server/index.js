@@ -5,8 +5,10 @@ require("dotenv").config();
 const morgan = require("morgan");
 const helmet = require("helmet");
 require("dotenv").config();
-const connectDB = require("./config/connectDB.js");
-const userRouter = require("./Routes/userRoute.js")
+const connectDB = require("./config/connectDB");
+const userRouter = require("./Routes/userRoute");
+const categoryRouter = require("./Routes/categoryRout");
+const uploadRouter = require("./Routes/uploadRoute");
 
 const app = express();
 
@@ -32,6 +34,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user",userRouter);
+app.use("/api/category",categoryRouter)
+app.use("/api/file",uploadRouter)
 
 connectDB()
     .then(() => {

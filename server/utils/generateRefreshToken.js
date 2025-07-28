@@ -2,7 +2,7 @@ const userModel = require("../models/user-models");
 const jwt = require("jsonwebtoken");
 
 const generateRefreshToken = async (userId) => {
-    const token =  jwt.sign({ id: userId },
+    const token =  jwt.sign({ _id: userId },
         process.env.SECRET_KEY_REFRESH_TOKEN,
         { expiresIn: "7d" }
     )

@@ -8,6 +8,7 @@ import { logout } from '../store/userSlice'
 import toast from 'react-hot-toast'
 import AxiosToastError from '../utils/AxiosToastError'
 import { HiOutlineExternalLink } from "react-icons/hi";
+import isAdmin from '../utils/isAdmin'
 
 
 const UserMenu = ({ close }) => {
@@ -43,10 +44,11 @@ const UserMenu = ({ close }) => {
     }
     return (
         <div>
+
             <div className='font-medium'>My Account</div>
             <div className='text-sm flex items-center gap-2'>
                 <span className='max-w-52 text-ellipsis line-clamp-1'>
-                    {user.name || user.mobile}
+                    {user.name || user.mobile}  <span className='font-medium text-primary-200'>{user.role === "ADMIN" ? "ADMIN" : ""}</span>
                 </span>
                 <Link onClick={handleClose} to={"/dashboard/profile"} className='hover:text-primary-200'>
                     <HiOutlineExternalLink size={15} />
@@ -56,9 +58,28 @@ const UserMenu = ({ close }) => {
             <Divider />
 
             <div className='text-sm grid gap-1 px-2'>
-                <Link onClick={handleClose} to={"/dashboard/product"} className='hover:bg-orange-200 py-1 px-2'>
-                    Product
-                </Link>
+
+                {
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/category"} className='hover:bg-orange-200 py-1 px-2'>
+                        Category
+                    </Link>)
+                }
+                {
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/sub-category"} className='hover:bg-orange-200 py-1 px-2'>
+                        Sub category
+                    </Link>)
+                }
+                {
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/upload-product"} className='hover:bg-orange-200 py-1 px-2'>
+                        Upload product
+                    </Link>)
+                }
+                {
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/product"} className='hover:bg-orange-200 py-1 px-2'>
+                        Product
+                    </Link>)
+                }
+
                 <Link onClick={handleClose} to={"/dashboard/myorder"} className='hover:bg-orange-200 py-1 px-2'>
                     My Order
                 </Link>
@@ -69,7 +90,7 @@ const UserMenu = ({ close }) => {
                     Log Out
                 </button>
             </div>
-        </div>
+        </div >
     )
 }
 

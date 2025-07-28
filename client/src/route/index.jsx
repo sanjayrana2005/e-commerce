@@ -12,6 +12,11 @@ import Dashboard from "../layout/Dashboard";
 import Profile from "../pages/Profile";
 import MyOrders from "../pages/MyOrders";
 import Address from "../pages/Address";
+import CategoryPage from "../pages/CategoryPage";
+import SubCategoryPage from "../pages/SubCategoryPage";
+import UploadProductPage from "../pages/UploadProductPage";
+import ProductAdminPage from "../pages/ProductAdminPage";
+import AdminPermission from "../layout/AdminPermission";
 
 const router = createBrowserRouter([
     {
@@ -62,6 +67,18 @@ const router = createBrowserRouter([
                     {
                         path: "address",
                         element:<Address/>
+                    },{
+                        path:"category",
+                        element:<AdminPermission><CategoryPage/></AdminPermission> 
+                    },{
+                        path:"sub-category",
+                        element:<AdminPermission><SubCategoryPage/></AdminPermission>
+                    },{
+                        path:"upload-product",
+                        element:<AdminPermission><UploadProductPage/></AdminPermission>
+                    },{
+                        path:"product",
+                        element:<AdminPermission><ProductAdminPage/></AdminPermission>
                     }
                 ]
             }

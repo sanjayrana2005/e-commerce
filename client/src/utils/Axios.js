@@ -37,12 +37,17 @@ Axios.interceptors.response.use(
             const refreshToken = localStorage.getItem("refreshtoken")
 
             if (refreshToken) {
-                const newAccessToken = await refrehAccessToken(refreshToken)
+                const newAccessToken = await refreshAccessToken(refreshToken)
 
                 if (newAccessToken) {
                     localStorage.setItem("accesstoken", newAccessToken)
                     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
                     return Axios(originalRequest)
+                }
+                else {
+                    // Redirect to login if refresh fails
+                    localStorage.removeItem("accesstoken");
+                    window.location.href = "/login";
                 }
             }
         }
@@ -51,13 +56,11 @@ Axios.interceptors.response.use(
     }
 )
 
-const refrehAccessToken = async (refreshToken) => {
+const refreshAccessToken = async () => {    // refreshToken in parameter
     try {
         const response = await Axios({
             ...SummaryApi.refreshToken,
-            headers: {
-                Authorization: `Bearer ${refreshToken}`
-            }
+            withCredentials: true
         })
         const accessToken = response.data.data.accessToken
         // localStorage.setItem("accessToken", accessToken)
