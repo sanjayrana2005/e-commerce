@@ -57,9 +57,17 @@ const SummaryApi = {
         url: "/api/category/update",
         method: "PUT"
     },
-    deleteCategory: {
-        url: "/api/category/delete",
+    deleteCategory: (_id) => ({
+        url: `/api/category/delete/${_id}`,
         method: "DELETE"
+    }),
+    createSubcategory :{
+        url :"/api/subcategory/create",
+        method:"POST"
+    },
+    getSubCategory : {
+        url:"/api/subcategory/get",
+        method:"POST"
     }
 
 }

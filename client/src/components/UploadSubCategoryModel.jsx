@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoCloseCircle } from "react-icons/io5";
 import uploadImage from '../utils/uploadImage';
 import { useSelector } from 'react-redux';
-import { all } from 'axios';
+import Axios from '../utils/Axios';
+import SummaryApi from '../common/summaryApi';
+import toast from "react-hot-toast"
+import AxiosToastError from '../utils/AxiosToastError';
 
 const UploadSubCategoryModel = ({ close }) => {
   const [subCategoryData, setSubCategoryData] = useState({
@@ -54,6 +57,28 @@ const UploadSubCategoryModel = ({ close }) => {
 
   }
 
+  const handleSubmitSubCategory = async (e) =>{
+    e.preventDefault()
+    try {
+      const response = await Axios({
+        ...SummaryApi.createSubcategory,
+        data:subCategoryData
+      })
+
+      const {data: responseData} = response
+      if(responseData.success){
+        toast.success(responseData.message)
+        if(close){
+          close()
+        }
+      }
+    } catch (error) {
+      AxiosToastError(error)
+      
+    }
+
+  }
+
 
   return (
     <section className='fixed top-0 bottom-0 left-0 right-0 bg-neutral-800 z-50 bg-opacity-60 flex items-center justify-center p-4'>
@@ -64,7 +89,7 @@ const UploadSubCategoryModel = ({ close }) => {
             <IoClose size={25} />
           </button>
         </div>
-        <form className='my-3 grid gap-2'>
+        <form className='my-3 grid gap-2' onSubmit={handleSubmitSubCategory}>
           <div className='grid gap-1'>
             <label htmlFor="name">Sub Category Name</label>
             <input
@@ -136,7 +161,7 @@ const UploadSubCategoryModel = ({ close }) => {
                   })
                 }}
               >
-                <option value={""} disabled>Select Category</option>
+                <option value={""} >Select Category</option>
                 {
                   allCategory.map((category,index) => {
                     return (
@@ -148,7 +173,7 @@ const UploadSubCategoryModel = ({ close }) => {
             </div>
           </div>
           <button className={`px-4 py-1 border 
-            ${subCategoryData.name && subCategoryData.image && subCategoryData.category ? `bg-primary-200` : `bg-gray-200 rounded`}
+            ${subCategoryData.name && subCategoryData.image && subCategoryData.category ? `bg-primary-200` : `bg-gray-200 rounded-sm`}
           `}>
 
             Submit

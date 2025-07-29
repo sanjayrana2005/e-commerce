@@ -56,7 +56,7 @@ const CategoryPage = () => {
     const handleDeleteCategory = async () => {
         try {
             const response = await Axios({
-                ...SummaryApi.deleteCategory,
+                ...SummaryApi.deleteCategory(deleteCategory._id),
                 data: deleteCategory
             })
             const { data: responseData } = response
@@ -64,6 +64,7 @@ const CategoryPage = () => {
             if (responseData) {
                 toast.success(responseData.message)
                 setOpenConfirmBoxDelete(false)
+                fetchCategory()
             }
         } catch (error) {
             AxiosToastError(error)
