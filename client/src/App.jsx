@@ -10,7 +10,7 @@ import { setUserDetails } from './store/userSlice';
 import { useDispatch } from 'react-redux';
 import SummaryApi from './common/summaryApi';
 import Axios from './utils/Axios';
-import { setAllCategory,setAllSubCategory } from './store/productSlice';
+import { setAllCategory,setAllSubCategory, setLoadingCategory } from './store/productSlice';
 
 function App() {
 
@@ -23,6 +23,7 @@ function App() {
 
   const fetchCategory = async () => {
     try {
+      dispatch(setLoadingCategory(true))
       const response = await Axios({
         ...SummaryApi.getCategory
       })
@@ -33,6 +34,9 @@ function App() {
       }
     } catch (error) {
       return error
+    }
+    finally {
+      dispatch(setLoadingCategory(false))
     }
   }
 

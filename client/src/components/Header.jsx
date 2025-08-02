@@ -68,7 +68,7 @@ const Header = () => {
             </div>
 
             {/** login and my cart*/}
-            <div className=''>
+            <div>
               {/* user icon display only in mobile */}
               <button className='text-neutral-600 lg:hidden' onClick={handleMobileUser}>
                 <FaRegCircleUser size={26} />

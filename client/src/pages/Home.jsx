@@ -1,10 +1,96 @@
 import React from 'react'
+import images from '../assets/images'
+import { useSelector } from 'react-redux'
+import ValidURLConvert from "../utils/ValidURLConvert"
+import { Link, useNavigate } from 'react-router-dom'
+
 
 const Home = () => {
+  const loadingCategory = useSelector(state => state.product.loadingCategory)
+
+  const categoryData = useSelector(state => state.product.allCategory)
+  const subCategoryData = useSelector(state => state.product.allSubCategory)
+  const navigate = useNavigate()
+
+  const handleRedirectProductListPage = (id, category) => {
+    console.log(id, " ", category);
+    const subCategory = subCategoryData.find(sub => {
+      const filterData = sub.category.some(c => {
+        return c._id == id
+      })
+      return filterData ? true : null
+    })
+    const url = `/${ValidURLConvert(category)}-${id}/${ValidURLConvert(subCategory.name)}-${subCategory._id}`
+    navigate(url)
+    console.log(url)
+  }
+
+
   return (
-    <div>
-      Home
-    </div>
+    <section className='bg-white'>
+      <div className="container mx-auto lg:px-10">
+        <div className={`w-full h-full min-h-45 bg-blue-100 rounded ${!images.banner && "animate-pulse my-2"}`}>
+          <img
+            src={images.banner}
+            alt="banner"
+            className='w-full h-full hidden lg:block'
+          />
+
+          <img
+            src={images.mobileBanner}
+            alt="banner"
+            className='w-full h-full lg:hidden'
+          />
+        </div>
+      </div>
+
+      <div className='container mx-auto px-4 lg:px-10 my-2 grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-2'>
+        {
+          loadingCategory ? (
+            new Array(12).fill(null).map((category, index) => {
+              return (
+                <div key={index + "loadingcategory"} className='bg-white rounded p-4 min-h-36 grid gap-2 shadow-md animate-pulse'>
+                  <div className='bg-blue-100 min-h-24 rounded'></div>
+                  <div className='bg-blue-100 h-8 rounded'></div>
+
+                </div>
+              )
+            })
+          ) : (
+            categoryData.map((category, index) => {
+              return (
+                <div key={category._id + "displayCategory"} className='w-full h-full' onClick={() => handleRedirectProductListPage(category._id, category.name)}>
+                  <div>
+                    <img
+                      src={category.image}
+                      alt=""
+                      className='w-full h-full object-scale-down'
+                    />
+                  </div>
+                </div>
+              )
+            })
+
+          )
+
+        }
+      </div>
+
+        {/* display category product */}
+
+        <div>
+          <div className='container mx-auto px-5 lg:px-12 flex items-center justify-between gap-4'>
+            <h3 className='font-medium text-lg md:text-xl'>Dairy, Bread & Eggs</h3>
+            <Link to={""} className='text-green-600 hover:text-green-400'>See All</Link>
+          </div>
+          <div>
+            
+          </div>
+        </div>
+
+
+
+    </section >
   )
 }
 
