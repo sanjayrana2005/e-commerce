@@ -32,7 +32,7 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: null
     },
-    discription: {
+    description: {
         type: String,
         default: ""
     },
@@ -47,5 +47,19 @@ const productSchema = mongoose.Schema({
 }, {
     timestamps: true
 });
+
+// create a text index
+productSchema.index({
+    name:"text",
+    description:"text",
+
+},{
+    weights:{
+        name : 10,
+        description:5}
+})
+
+
+
 const productModel = mongoose.model("product",productSchema)
 module.exports = productModel

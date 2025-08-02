@@ -9,6 +9,8 @@ const connectDB = require("./config/connectDB");
 const userRouter = require("./Routes/userRoute");
 const categoryRouter = require("./Routes/categoryRout");
 const uploadRouter = require("./Routes/uploadRoute");
+const subCategoryRouter = require("./Routes/subCategoryRoute");
+const productRouter = require("./Routes/productRoutes");
 
 const app = express();
 
@@ -36,6 +38,8 @@ app.get("/", (req, res) => {
 app.use("/api/user",userRouter);
 app.use("/api/category",categoryRouter)
 app.use("/api/file",uploadRouter)
+app.use("/api/subcategory",subCategoryRouter)
+app.use("/api/product",productRouter)
 
 connectDB()
     .then(() => {

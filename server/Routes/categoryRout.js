@@ -7,6 +7,6 @@ const categoryRouter = express.Router()
 categoryRouter.post("/add-category", auth, AddCategoryController)
 categoryRouter.get("/get", getCategoryController)
 categoryRouter.put("/update", auth, updateCategoryController)
-categoryRouter.delete("/delete", auth, deleteCategoryController)
+categoryRouter.delete("/delete/:id", auth, deleteCategoryController)
 
 module.exports = categoryRouter
