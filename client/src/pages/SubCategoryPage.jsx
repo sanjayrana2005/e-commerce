@@ -9,6 +9,9 @@ import { createColumnHelper } from "@tanstack/react-table"
 import ViewImage from '../components/ViewImage'
 import { LuPencil } from "react-icons/lu";
 import { MdDeleteOutline } from "react-icons/md";
+import EditSubCategory from '../components/EditSubCategory'
+import ConfirmBox from '../components/ConfirmBox'
+import toast from 'react-hot-toast'
 
 const SubCategoryPage = () => {
     const [openSubCategory, setOpenSubCategory] = useState(false)
@@ -16,6 +19,14 @@ const SubCategoryPage = () => {
     const [loading, setLoading] = useState(false)
     const [imageURL, setImageURL] = useState("")
     const columnHelper = createColumnHelper()
+    const [openEdit, setOpenEdit] = useState(false)
+    const [editData, setEditData] = useState({
+        _id: ""
+    })
+    const [deleteSubCategory, setDeleteSubCategory] = useState({
+        _id: ""
+    })
+    const [openDeleteConfirmBox, setOpenDeleteConfirmBox] = useState(false)
 
 
     const fetchSubCategory = async () => {
@@ -71,16 +82,23 @@ const SubCategoryPage = () => {
                 )
             }
         }),
-        columnHelper.accessor("_id",{
-            header : "Action",
-            cell : ({row}) => {
+        columnHelper.accessor("_id", {
+            header: "Action",
+            cell: ({ row }) => {
                 return (
-                    <div className='flex items-center justify-center gap-3'>
-                        <button className='p-1 bg-green-100 rounded-lg hover:text-green-600'>
-                            <LuPencil size={20}/>
+                    <div className='flex flex-col sm:flex-row items-center justify-center gap-2'>
+                        <button onClick={() => {
+                            setOpenEdit(true)
+                            setEditData(row.original)
+                        }} className='p-1 bg-green-100 rounded-lg hover:text-green-600
+                        '>
+                            <LuPencil size={20} />
                         </button>
-                        <button className='p-1 bg-red-100 rounded-lg hover:text-red-600'>
-                            <MdDeleteOutline size={20}/>
+                        <button onClick={() => {
+                            setOpenDeleteConfirmBox(true)
+                            setDeleteSubCategory(row.original)
+                        }} className='p-1 bg-red-100 rounded-lg hover:text-red-600'>
+                            <MdDeleteOutline size={20} />
                         </button>
                     </div>
                 )
@@ -89,6 +107,24 @@ const SubCategoryPage = () => {
 
     ])
     const memoizedData = useMemo(() => data, [data]);
+    const handleDelteSubCategory = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.deleteSubCategory,
+                data: deleteSubCategory
+            })
+            const { data: responseData } = response
+
+            if (responseData.success) {
+                toast.success(responseData.message)
+                fetchSubCategory()
+                setOpenDeleteConfirmBox(false)
+                setDeleteSubCategory({ _id: "" })
+            }
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
     return (
         <section>
             <div className='p-2 bg-white shadow-md flex items-center justify-between'>
@@ -96,7 +132,7 @@ const SubCategoryPage = () => {
                 <button onClick={() => setOpenSubCategory(true)} className='text-sm border border-primary-200 hover:bg-primary-200 px-3 py-1 rounded'>Add Sub Category</button>
             </div>
 
-            <div>
+            <div className='overflow-auto w-full max-w-[90vw]'>
                 <DisplayTable
                     data={memoizedData}
                     column={column}
@@ -104,11 +140,29 @@ const SubCategoryPage = () => {
             </div>
 
             {
-                openSubCategory && (<UploadSubCategoryModel close={() => setOpenSubCategory(false)} />)
+                openSubCategory && (<UploadSubCategoryModel close={() => setOpenSubCategory(false)} onSuccess={fetchSubCategory} />)
+
+
+
             }
             {
                 imageURL &&
                 <ViewImage url={imageURL} close={() => setImageURL("")} />
+            }
+            {
+                openEdit &&
+                <EditSubCategory data={editData} close={() => setOpenEdit(false)}
+                    fetchData={fetchSubCategory}
+                />
+            }
+            {
+                openDeleteConfirmBox && (
+                    <ConfirmBox
+                        cancel={() => setOpenDeleteConfirmBox(false)}
+                        close={() => setOpenDeleteConfirmBox(false)}
+                        confirm={handleDelteSubCategory}
+                    />
+                )
             }
         </section>
     )

@@ -10,7 +10,7 @@ import { setUserDetails } from './store/userSlice';
 import { useDispatch } from 'react-redux';
 import SummaryApi from './common/summaryApi';
 import Axios from './utils/Axios';
-import { setAllCategory } from './store/productSlice';
+import { setAllCategory,setAllSubCategory } from './store/productSlice';
 
 function App() {
 
@@ -29,18 +29,32 @@ function App() {
       const { data: responseData } = response
       if (responseData.success) {
         dispatch(setAllCategory(responseData.data))
-        
+
       }
     } catch (error) {
       return error
-    } 
+    }
   }
 
+  const fetchSubCategory = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.getSubCategory
+      })
+      const { data: responseData } = response
+      if (responseData.success) {
+        dispatch(setAllSubCategory(responseData.data))
+
+      }
+    } catch (error) {
+      return error
+    }
+  }
 
   useEffect(() => {
     fetchUser()
     fetchCategory()
-
+    fetchSubCategory()
   }, [])
 
   return (<>

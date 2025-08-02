@@ -7,16 +7,13 @@ import SummaryApi from '../common/summaryApi';
 import toast from "react-hot-toast"
 import AxiosToastError from '../utils/AxiosToastError';
 
-
-
-
-const UploadSubCategoryModel = ({ close, onSuccess }) => {
+const EditSubCategory = ({ close,data, fetchData,onSuccess }) => {
   const [subCategoryData, setSubCategoryData] = useState({
-    name: "",
-    image: "",
-    category: []
+    _id:data._id,
+    name: data.name,
+    image: data.image,
+    category: data.category  || []
   })
-  const [loading,setLoading] = useState(false)
 
   const allCategory = useSelector(state => state.product.allCategory)
  
@@ -38,9 +35,7 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
     if (!file) {
       return
     }
-    try {
-      setLoading(true)
-      const response = await uploadImage(file)
+    const response = await uploadImage(file)
     const { data: ImageResponse } = response
 
     setSubCategoryData((prev) => {
@@ -49,13 +44,6 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
         image: ImageResponse.data.url
       }
     })
-    } catch (error) {
-      return error;
-    }
-    finally {
-    setLoading(false); // Stop loading
-  }
-    
 
   }
 
@@ -74,7 +62,7 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
     e.preventDefault()
     try {
       const response = await Axios({
-        ...SummaryApi.createSubcategory,
+        ...SummaryApi.updateSubCategory,
         data:subCategoryData
       })
 
@@ -88,13 +76,14 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
         if(close){
           close()
         }
+        if(fetchData){
+          fetchData()
+        }
       }
     } catch (error) {
       AxiosToastError(error)
-      }
-      finally{
-        setLoading(false)
-      }
+      
+    }
 
   }
 
@@ -103,14 +92,14 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
     <section className='fixed top-0 bottom-0 left-0 right-0 bg-neutral-800 z-50 bg-opacity-60 flex items-center justify-center p-4'>
       <div className='w-full max-w-4xl bg-white p-4 rounded'>
         <div className='flex justify-between'>
-          <h1 className='font-medium'>Add Sub Category</h1>
+          <h1 className='font-medium'>Edit Sub Category</h1>
           <button onClick={close}>
             <IoClose size={25} />
           </button>
         </div>
         <form className='my-3 grid gap-2' onSubmit={handleSubmitSubCategory}>
           <div className='grid gap-1'>
-            <label htmlFor="name">Sub Category Name</label>
+            <label htmlFor="name"> Sub Category Name</label>
             <input
               type="text"
               id='name'
@@ -120,6 +109,7 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
               className='p-3 bg-blue-50 outline-none border focus:border-primary-200 rounded'
             />
           </div>
+
           <div className='grid gap-1'>
             <p>Image</p>
             <div className='flex flex-col lg:flex-row items-center gap-2'>
@@ -139,10 +129,7 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
               </div>
               <label htmlFor="uploadSubCategory">
                 <div className='px-4 py-1 border border-primary-200  rounded hover:bg-primary-200 cursor-pointer '>
-                {
-                  loading ? "Loading...": "Upload Image"
-                }
-                  
+                  Upload Image
                 </div>
                 <input
                   type="file"
@@ -153,6 +140,7 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
               </label>
             </div>
           </div>
+
           <div className='grid gap-2'>
             <label htmlFor="">Select Category</label>
             <div className='border focus-within:border-primary-200 rounded'>
@@ -168,7 +156,7 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
                 )
               })
             }
-            </div> 
+            </div>
               <select
                 className='w-full bg-transparent border p-2 rounded outline-none'
                 onChange={(e)=>{
@@ -195,9 +183,8 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
             </div>
           </div>
           <button className={`px-4 py-1 border 
-            ${subCategoryData.name && subCategoryData.image && subCategoryData.category ? `bg-primary-200` : `bg-gray-200 rounded-md`}
+            ${subCategoryData.name && subCategoryData.image && subCategoryData.category ? `bg-primary-200` : `bg-gray-200 rounded-sm`}
           `}>
-
             Submit
           </button>
         </form>
@@ -206,4 +193,4 @@ const UploadSubCategoryModel = ({ close, onSuccess }) => {
   )
 }
 
-export default UploadSubCategoryModel
+export default EditSubCategory
