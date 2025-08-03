@@ -22,8 +22,8 @@ const createProductController = async (req, res) => {
         const product = new productModel({
             name,
             image,
-            category,
-            subCategory,
+            category: category[0],
+            subCategory: subCategory[0],
             unit,
             stock,
             price,
@@ -76,8 +76,8 @@ const getProductController = async (req, res) => {
             error: false,
             success: true,
             totalCount: totalCount,
-            totalNoPage:Math.ceil(totalCount / limit),
-            data:data
+            totalNoPage: Math.ceil(totalCount / limit),
+            data: data
         })
     } catch (error) {
         return res.status(500).json({
@@ -88,4 +88,37 @@ const getProductController = async (req, res) => {
     }
 }
 
-module.exports = { createProductController, getProductController }
+const getProductByCategory = async (req, res) => {
+    try {
+        console.log("id search", req.body.id)
+        const { id } = req.body
+        if (!id) {
+            return res.status(400).json({
+                message: "Provide category id",
+                error: true,
+                success: false
+            })
+        }
+
+        const product = await productModel.find({
+            category: { $in: id }
+        }).limit(15)
+
+        console.log("Querying products for category ID:", id);
+        console.log("Found:", product.length, "products");
+        return res.json({
+            message: "Category product list",
+            data: product,
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+module.exports = { createProductController, getProductController, getProductByCategory }

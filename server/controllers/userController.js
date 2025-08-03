@@ -425,57 +425,109 @@ const resetPassword = async (req, res) => {
 
 // refrench token controller
 
+// const refreshToken = async (req, res) => {
+//     try {
+//         const refreshToken = req.cookies.refreshToken || req?.headers?.authorization?.split(" ")[1] // [bearer token]
+
+//         if (!refreshToken) {
+//             return res.status(401).json({
+//                 message: "Invalid Token",
+//                 error: true,
+//                 success: false,
+//             })
+//         }
+
+//         const verifyToken = await jwt.verify(refreshToken, process.env
+//             .SECRET_KEY_REFRESH_TOKEN)
+
+//         if (!verifyToken) {
+//             return res.status(401).json({
+//                 message: "token is expired",
+//                 error: true,
+//                 success: false
+//             })
+//         }
+//         const userId = verifyToken?._id
+
+//         const newAccessToken = await generateAccessToken(userId)
+
+//         const cookieOption = {
+//             httpOnly: true,
+//             secure: true,
+//             sameSite: "None"
+//         }
+
+//         res.cookie("accessToken", newAccessToken, cookieOption)
+
+//         return res.json({
+//             message: "New access token generated",
+//             error: false,
+//             success: true,
+//             data: {
+//                 accessToken: newAccessToken
+//             }
+//         })
+
+//     } catch (error) {
+//         res.status(500).json({
+//             message: error.message || error,
+//             error: true,
+//             success: false
+//         })
+//     }
+// }
+
 const refreshToken = async (req, res) => {
-    try {
-        const refreshToken = req.cookies.refreshToken || req?.headers?.authorization?.split(" ")[1] // [bearer token]
+  try {
+    const refreshToken = req.cookies.refreshToken || req.headers?.authorization?.split(" ")[1];
 
-        if (!refreshToken) {
-            return res.status(401).json({
-                message: "Invalid Token",
-                error: true,
-                success: false,
-            })
-        }
-
-        const verifyToken = await jwt.verify(refreshToken, process.env
-            .SECRET_KEY_REFRESH_TOKEN)
-
-        if (!verifyToken) {
-            return res.status(401).json({
-                message: "token is expired",
-                error: true,
-                success: false
-            })
-        }
-        const userId = verifyToken?._id
-
-        const newAccessToken = await generateAccessToken(userId)
-
-        const cookieOption = {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None"
-        }
-
-        res.cookie("accessToken", newAccessToken, cookieOption)
-
-        return res.json({
-            message: "New access token generated",
-            error: false,
-            success: true,
-            data: {
-                accessToken: newAccessToken
-            }
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message || error,
-            error: true,
-            success: false
-        })
+    if (!refreshToken) {
+      return res.status(401).json({
+        message: "No refresh token provided",
+        error: true,
+        success: false,
+      });
     }
-}
+
+    // ✅ STEP 1: Verify token
+    const decoded = jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH_TOKEN);
+    const userId = decoded._id;
+
+    // ✅ STEP 2: Now validate token from DB
+    const user = await userModel.findById(userId);
+    if (!user || user.refresh_token !== refreshToken) {
+      return res.status(403).json({
+        message: "Token mismatch or user not found",
+        error: true,
+        success: false
+      });
+    }
+
+    // ✅ STEP 3: Generate new access token
+    const newAccessToken = await generateAccessToken(user._id);
+
+    // ✅ STEP 4: Send new access token in response or cookie
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None"
+    });
+
+    return res.json({
+      message: "New access token generated",
+      error: false,
+      success: true,
+      data: { accessToken: newAccessToken }
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Token refresh failed",
+      error: true,
+      success: false,
+    });
+  }
+};
 
 // get login user details 
 const userDetails = async (req, res) => {

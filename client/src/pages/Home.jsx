@@ -3,6 +3,7 @@ import images from '../assets/images'
 import { useSelector } from 'react-redux'
 import ValidURLConvert from "../utils/ValidURLConvert"
 import { Link, useNavigate } from 'react-router-dom'
+import CategoryWiseDisplayProduct from '../components/CategoryWiseDisplayProduct'
 
 
 const Home = () => {
@@ -13,7 +14,6 @@ const Home = () => {
   const navigate = useNavigate()
 
   const handleRedirectProductListPage = (id, category) => {
-    console.log(id, " ", category);
     const subCategory = subCategoryData.find(sub => {
       const filterData = sub.category.some(c => {
         return c._id == id
@@ -22,7 +22,6 @@ const Home = () => {
     })
     const url = `/${ValidURLConvert(category)}-${id}/${ValidURLConvert(subCategory.name)}-${subCategory._id}`
     navigate(url)
-    console.log(url)
   }
 
 
@@ -76,17 +75,15 @@ const Home = () => {
         }
       </div>
 
-        {/* display category product */}
+      {/* display category product */}
 
-        <div>
-          <div className='container mx-auto px-5 lg:px-12 flex items-center justify-between gap-4'>
-            <h3 className='font-medium text-lg md:text-xl'>Dairy, Bread & Eggs</h3>
-            <Link to={""} className='text-green-600 hover:text-green-400'>See All</Link>
-          </div>
-          <div>
-            
-          </div>
-        </div>
+      {
+        categoryData.map((c, index) => {
+          return (
+            <CategoryWiseDisplayProduct key={c?._id + "categoryWiseProduct"} id={c?._id} name={c?.name} />
+          )
+        })
+      }
 
 
 
