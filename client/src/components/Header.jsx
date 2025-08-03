@@ -101,7 +101,7 @@ const Header = () => {
 
                     </div>
                   ) : (
-                    <button onClickCapture={redirectToLoginPage} className='text-lg px-2'>Login</button>
+                    <button onClickCapture={redirectToLoginPage} className='text-lg px-2 hover:text-green-600'>Login</button>
                   )
                 }
                 <button className='flex items-center gap-2 bg-green-800 p-3 rounded text-white hover:bg-green-700'>

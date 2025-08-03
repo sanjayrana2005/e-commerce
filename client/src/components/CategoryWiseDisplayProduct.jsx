@@ -20,7 +20,6 @@ const CategoryWiseDisplayProduct = ({id,name}) => {
                 }
             })
             const {data:responseData} = response
-            // console.log("Response data:", responseData);
             if(responseData.success){
                 setData(responseData.data)
             }

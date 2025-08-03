@@ -119,18 +119,22 @@ const ProductPage = () => {
 
         {/* // pagination */}
 
-        <div className='flex justify-between my-4'>
+        <div className='relative flex items-center justify-between my-4'>
           {
             page !== 1 ? (
-              <button onClick={handlePreviousPage} className='border border-primary-200 hover:bg-primary-200 px-4 py-1 rounded-sm'>
+              <button onClick={handlePreviousPage} className='border border-primary-200 hover:bg-primary-200 px-3 py-1 rounded-sm'>
                 Previous
               </button>
-            ) : ("")
+            ) : (
+              <div className='w-[80px]'></div>
+            )
           }
-          <button className='w-full bg-slate-100 '>
-            {page}/{totalPageCount}
-          </button>
-          <button onClick={handleNextPage} className='border border-primary-200 hover:bg-primary-200 px-4 py-1 rounded-sm'>
+          <div className='absolute left-1/2 -translate-x-1/2'>
+            <button className='px-4 py-1 bg-slate-100 rounded-sm'>
+              {page}/{totalPageCount}
+            </button>
+          </div>
+          <button onClick={handleNextPage} className='border border-primary-200 hover:bg-primary-200 px-3 py-1 rounded-sm'>
             Next
           </button>
         </div>
