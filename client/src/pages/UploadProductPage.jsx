@@ -11,6 +11,9 @@ import Axios from '../utils/Axios';
 import SummaryApi from '../common/summaryApi';
 import AxiosToastError from '../utils/AxiosToastError';
 import successAlert from '../utils/successAlert';
+import { useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+
 
 
 const UploadProductPage = () => {
@@ -65,24 +68,54 @@ const UploadProductPage = () => {
     })
   }
 
-  const handleUploadImage = async (e) => {
-    const file = e.target.files[0]
-    if (!file) {
+  const handleUploadImage = useCallback(async (e) => {
+    const files = Array.from(e.target.files || e)
+    if (files.length === 0) {
       return
     }
     setImageLoading(true)
-    const responnse = await uploadImage(file)
-    const { data: ImageResponse } = responnse
-    const imageUrl = ImageResponse.data.url
-    setUploadProductData((prev) => {
-      return {
-        ...prev,
-        image: [...prev.image, imageUrl]
+
+    try {
+      const uploadedUrl = []
+
+      for (let file of files) {
+        const responnse = await uploadImage(file)
+        const { data: ImageResponse } = responnse
+        const imageUrl = ImageResponse.data.url
+        uploadedUrl.push(imageUrl)
       }
 
-    })
-    setImageLoading(false)
-  }
+      setUploadProductData((prev) => {
+        return {
+          ...prev,
+          image: [...prev.image, ...uploadedUrl]
+        }
+      })
+    }
+    catch (error) {
+      return error
+    }
+    finally {
+      setImageLoading(false)
+    }
+
+  }, [])
+
+  const onDrop = useCallback((acceptedFiles) => {
+    // Convert to event-like object to reuse handleUploadImage
+    const fileList = new DataTransfer();
+    acceptedFiles.forEach(file => fileList.items.add(file));
+    const event = { target: { files: fileList.files } };
+    handleUploadImage(event);
+  }, [handleUploadImage]);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: 'image/*',
+    multiple: true,
+    noClick: true, // disables default click behavior (you already have a label/button for that)
+    noKeyboard: true,
+  });
 
   const handleDeleteImage = async (index) => {
     uploadProductData.image.splice(index, 1)
@@ -118,7 +151,7 @@ const UploadProductPage = () => {
       const { data: responseData } = response
 
       if (responseData.success) {
-        successAlert({title:responseData.message})
+        successAlert({ title: responseData.message })
         setUploadProductData({
           name: "",
           image: [],
@@ -137,6 +170,17 @@ const UploadProductPage = () => {
     }
 
   }
+
+  const handleDeleteField = (key) => {
+    const updatedDetails = { ...uploadProductData.more_details };
+    delete updatedDetails[key];
+
+    setUploadProductData(prev => ({
+      ...prev,
+      more_details: updatedDetails,
+    }));
+  };
+
 
 
   return (
@@ -178,7 +222,7 @@ const UploadProductPage = () => {
 
           <div>
             <p className='font-medium'>Image</p>
-            <div>
+            <div {...getRootProps()}>
               <label htmlFor='productImage' className='bg-blue-100 h-24 rounded border flex  items-center justify-center cursor-pointer '>
                 <div className='flex flex-col items-center justify-center'>
                   {
@@ -196,10 +240,14 @@ const UploadProductPage = () => {
                   type="file"
                   id='productImage'
                   hidden
+                  multiple
                   onChange={handleUploadImage}
                   accept='image/*'
                 />
               </label>
+
+              <input {...getInputProps()} /> {/* This handles drag-and-drop */}
+
               {/* display uploaded image */}
               <div className='flex flex-wrap gap-2'>
                 {
@@ -328,7 +376,7 @@ const UploadProductPage = () => {
           <div className='grid gap-1'>
             <label htmlFor="stock" className='font-medium'>Number of Stock</label>
             <input
-              type="number"
+              type="text"
               name="stock"
               id="stock"
               value={uploadProductData.stock}
@@ -342,7 +390,7 @@ const UploadProductPage = () => {
           <div className='grid gap-1'>
             <label htmlFor="price" className='font-medium'>Price of Product</label>
             <input
-              type="number"
+              type="text"
               name="price"
               id="price"
               value={uploadProductData.price}
@@ -356,7 +404,7 @@ const UploadProductPage = () => {
           <div className='grid gap-1'>
             <label htmlFor="discount" className='font-medium'>Discount</label>
             <input
-              type="number"
+              type="text"
               name="discount"
               id="discount"
               value={uploadProductData.discount}
@@ -373,8 +421,17 @@ const UploadProductPage = () => {
             {
               Object?.keys(uploadProductData?.more_details)?.map((k, index) => {
                 return (
-                  <div className='grid gap-1'>
-                    <label  className='font-medium' htmlFor={k}>{k}</label>
+                  <div className='grid gap-1 mb-2'>
+                    <div className='flex items-center justify-between'>
+                      <label className='font-medium' htmlFor={k}>{k}</label>
+                      <div className='hover:cursor-pointer'>
+                        <MdDeleteOutline
+                          className='text-red-600 hover:text-red-500'
+                          size={20}
+                          onClick={() => handleDeleteField(k)}
+                        />
+                      </div>
+                    </div>
                     <input
                       type="text"
                       id={k}
@@ -405,6 +462,7 @@ const UploadProductPage = () => {
           <div onClick={() => setOpenAddFields(true)} className='w-32 text-center hover:bg-primary-200 bg-white py-1 px-3 rounded border border-primary-200 cursor-pointer'>
             Add Fields
           </div>
+
           <button
             className='bg-primary-100 hover:bg-primary-200 rounded py-2 font-medium'
           >
@@ -430,5 +488,6 @@ const UploadProductPage = () => {
     </section>
   )
 }
+
 
 export default UploadProductPage

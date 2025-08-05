@@ -7,7 +7,7 @@ const AddFieldComponent = ({ close,value,onChange,submit }) => {
             <div className='bg-white rounded p-4 w-full max-w-md'>
                 <div className='flex justify-between'>
                     <h1 className='font-medium'>Add
-                        Fields</h1>
+                        Field</h1>
                     <button onClick={close}>
                         <IoClose size={25} />
                     </button>
@@ -18,6 +18,7 @@ const AddFieldComponent = ({ close,value,onChange,submit }) => {
                     placeholder='Enter field name'
                     value={value}
                     onChange={onChange}
+                    autoFocus
                 />
                 <button className='bg bg-primary-100 px-4 py-2 rounded mx-auto block hover:bg-primary-200'
                 onClick={submit}>Add Field</button>
