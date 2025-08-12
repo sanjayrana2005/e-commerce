@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import AxiosToastError from '../utils/AxiosToastError'
 import Axios from '../utils/Axios'
 import SummaryApi from '../common/summaryApi'
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa";
+import DisplayPriceInRupee from '../utils/DisplayPriceInRupee'
+import Divider from '../components/Divider'
+import images from '../assets/images'
 
 const ProducDisplayPage = () => {
 
@@ -13,8 +16,9 @@ const ProducDisplayPage = () => {
     name: "",
     image: []
   })
-  const [loading, setLoading] = useState(false)
   const [image, setImage] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const imageContainer = useRef()
 
   const fetchProductsDetails = async () => {
     try {
@@ -42,6 +46,12 @@ const ProducDisplayPage = () => {
     fetchProductsDetails()
   }, [params])
 
+  const handleScrollRight = () => {
+    imageContainer.current.scrollLeft += 100
+  }
+  const handleScrollLeft = () => {
+    imageContainer.current.scrollLeft -= 100
+  }
   return (
     <section className='container mx-auto p-4 lg:px-10 grid lg:grid-cols-2'>
       <div className=''>
@@ -57,18 +67,17 @@ const ProducDisplayPage = () => {
             data.image.map((img, index) => {
               return (
                 <div key={img + index + "point"} className={`bg-slate-200 w-3 h-3 lg:w-4 lg:h-4 my-2 rounded-full ${index === image && "bg-slate-400"}`}>
-
                 </div>
               )
             })
           }
         </div>
         <div className='grid relative'>
-          <div className='z-10 relative flex gap-3 w-full overflow-x-auto scrollbar-none'>
+          <div ref={imageContainer} className='z-10 relative flex gap-3 w-full overflow-x-auto scrollbar-none lg:ml-4'>
             {
               data.image.map((img, index) => {
                 return (
-                  <div className='h-20 w-20 min-h-20 min-w-20 shadow-md ' key={img + index}>
+                  <div className='lg:h-20 lg:w-20 h-14 w-14 lg:min-h-20 lg:min-w-20 min-w-14 min-h-14 shadow-md ' key={img + index}>
                     <img
                       src={img}
                       alt={`small image of ${data.name}`}
@@ -80,19 +89,70 @@ const ProducDisplayPage = () => {
               })
             }
           </div>
-          <div className='w-full h-full flex justify-between absolute -mx-4'>
-            <button className='bg-white w-5'>
+          <div className='hidden  w-full h-full lg:flex items-center justify-between absolute -ml-3'>
+            <button onClick={handleScrollLeft} className='z-10 relative bg-white p-1 rounded-full shadow-lg'>
               <FaAngleLeft />
             </button>
-            <button className='bg-white w-5'>
+            <button onClick={handleScrollRight} className='z-10 relative bg-white p-1 rounded-full shadow-lg'>
               <FaAngleRight />
             </button>
           </div>
         </div>
       </div>
-      <div>
 
+      <div className='p-2 lg:pl-6 text-base lg:text-lg'>
+        <p className='bg-green-300 w-fit p-1 rounded'>10 min</p>
+        <h2 className='text-lg font-medium lg:text-2xl'>{data.name}</h2>
+        <p className=''>{data.unit}</p>
+        <Divider />
+        <div>
+          <p> Price</p>
+          <div className='mt-1 border border-green-600 px-2 py-1 rounded bg-green-100 w-fit'>
+            <p className='font-medium text-lg lg:text-xl'>{DisplayPriceInRupee(data.price)}</p>
+          </div >
+        </div>
+        <button className='my-3 px-5 py-1 bg-green-500 hover:bg-green-600 text-white rounded'>Add</button>
+        
+        <h2 className='font-medium'>Why shop from binkeyit?</h2>
+        <div>
+          <div className='flex items-center gap-3 mt-2'>
+            <img 
+            src={images.minuteDelivery} 
+            alt="superfastDelivery image" 
+            className='w-20 h-20 '
+            />
+            <div className='text-sm'>
+              <div className='font-normal'>Superfast Delivery</div>
+              <p>Get your order delivered to your doorstop at the earliest from dark stores near you.</p>
+            </div>
+          </div>
+
+          <div className='flex items-center gap-3 mt-2'>
+            <img 
+            src={images.bestPrice} 
+            alt="best price offers image" 
+            className='w-20 h-20 '
+            />
+            <div className='text-sm'>
+              <div className='font-normal'>Best Prices & Offers</div>
+              <p>Best price destination with offers directly from .</p>
+            </div>
+          </div>
+
+          <div className='flex items-center gap-3 mt-2'>
+            <img 
+            src={images.wideDinkeyit} 
+            alt="wide Assortment image" 
+            className='w-20 h-20 '
+            />
+            <div className='text-sm'>
+              <div className='font-normal'>Wide Assortment</div>
+              <p>Choose from 5000+ products accross foods, personal care, household & other category.</p>
+            </div>
+          </div>
+        </div>
       </div>
+      
     </section>
   )
 }
