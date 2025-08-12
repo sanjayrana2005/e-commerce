@@ -13,10 +13,14 @@ import AxiosToastError from '../utils/AxiosToastError';
 import successAlert from '../utils/successAlert';
 import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useRef } from 'react';
 
 
 
 const UploadProductPage = () => {
+
+  const fileInputRef = useRef(null)
+
   const [uploadProductData, setUploadProductData] = useState({
     name: "",
     image: [],
@@ -97,6 +101,10 @@ const UploadProductPage = () => {
     }
     finally {
       setImageLoading(false)
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
     }
 
   }, [])
@@ -181,8 +189,6 @@ const UploadProductPage = () => {
     }));
   };
 
-
-
   return (
     <section>
       <div className='p-2 bg-white shadow-md flex items-center justify-between'>
@@ -224,14 +230,14 @@ const UploadProductPage = () => {
             <p className='font-medium'>Image</p>
             <div {...getRootProps()}>
               <label htmlFor='productImage' className='bg-blue-100 h-24 rounded border flex  items-center justify-center cursor-pointer '>
-                <div className='flex flex-col items-center justify-center'>
+                <div className='flex flex-col items-center justify-center'
+                >
                   {
                     imageLoading ? <Loading /> : (
                       <>
                         <MdCloudUpload size={35} />
                         <p>Upload Image</p>
                       </>
-
                     )
                   }
 
@@ -452,6 +458,7 @@ const UploadProductPage = () => {
                       }}
                       required
                       className='bg-blue-50 p-2 outline-none border focus-within:border-primary-200 rounded'
+                      autoFocus
                     />
                   </div>
                 )

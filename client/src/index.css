@@ -6,9 +6,24 @@
 
 @import './hide-number-input-arrows.css';
 
+html {
+    scroll-behavior: smooth;
+}
 body {
     font-family: "Poppins", sans-serif;
     font-weight: 300;
     font-style: normal;
-    @apply bg-blue-50 text-neutral-600
+    @apply bg-blue-50 text-neutral-600 scroll-smooth
+}
+
+.scrollbar-none::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbrCoustom::-webkit-scrollbar {
+    width: 9px;
+    @apply bg-blue-100
+}
+.scrollbrCoustom::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 rounded-full
 }

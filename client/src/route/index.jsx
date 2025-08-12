@@ -18,6 +18,7 @@ import UploadProductPage from "../pages/UploadProductPage";
 import AdminPermission from "../layout/AdminPermission";
 import ProductPage from "../pages/ProductPage";
 import ProductListPage from "../pages/ProductListPage";
+import ProducDisplayPage from "../pages/ProducDisplayPage";
 
 const router = createBrowserRouter([
     {
@@ -92,6 +93,10 @@ const router = createBrowserRouter([
                         element : <ProductListPage/>
                     }
                 ]
+            },
+            {
+                path : "product/:product",
+                element : <ProducDisplayPage/>
             }
 
         ]

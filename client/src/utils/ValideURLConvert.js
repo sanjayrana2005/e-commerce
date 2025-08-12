@@ -1,6 +1,6 @@
-const ValidURLConvert = (name) => {
+const ValideURLConvert = (name) => {
     const url = name.toString().replaceAll(" ", "-").replaceAll(",", "-").replaceAll("&", "-")
     return url
 }
 
-export default ValidURLConvert
+export default ValideURLConvert

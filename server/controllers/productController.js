@@ -121,4 +121,76 @@ const getProductByCategory = async (req, res) => {
     }
 }
 
-module.exports = { createProductController, getProductController, getProductByCategory }
+const getProductByCategoryAndSubCategory = async (req, res) => {
+    try {
+
+        const { categoryId, subCategoryId, page, limit } = req.body
+
+        if (!categoryId || !subCategoryId) {
+            return res.status(400).json({
+                message: "Please categoryId and SubCategoryId",
+                error: true,
+                success: false
+            })
+        }
+
+        if (!page) {
+            page = 1
+        }
+        if (!limit) {
+            limit = 10
+        }
+
+        const query = {
+            category: { $in: categoryId },
+            subCategory: { $in: subCategoryId }
+        }
+
+        const skip = (page - 1) * limit
+        
+        const [data, dataCount] = await Promise.all([
+            productModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            productModel.countDocuments(query)
+        ])
+        return res.json({
+            message: "Product List",
+            data: data,
+            totalCount: dataCount,
+            page: page,
+            limit: limit,
+            error: false,
+            success: true
+
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+const getProductSDetails = async (req,res) => {
+    try {
+        const {productId}=req.body
+
+        const product = await productModel.findOne({_id:productId})
+
+        return res.json({
+            message : "product details",
+            data:product,
+            error:false,
+            success:true,
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message : error.message || error,
+            error : true,
+            success : false
+        })
+    }
+}
+
+module.exports = { createProductController, getProductController, getProductByCategory, getProductByCategoryAndSubCategory,getProductSDetails }

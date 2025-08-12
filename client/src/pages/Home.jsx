@@ -1,7 +1,7 @@
 import React from 'react'
 import images from '../assets/images'
 import { useSelector } from 'react-redux'
-import ValidURLConvert from "../utils/ValidURLConvert"
+import ValideURLConvert from "../utils/ValideURLConvert"
 import { Link, useNavigate } from 'react-router-dom'
 import CategoryWiseDisplayProduct from '../components/CategoryWiseDisplayProduct'
 
@@ -20,7 +20,7 @@ const Home = () => {
       })
       return filterData ? true : null
     })
-    const url = `/${ValidURLConvert(category)}-${id}/${ValidURLConvert(subCategory.name)}-${subCategory._id}`
+    const url = `/${ValideURLConvert(category)}-${id}/${ValideURLConvert(subCategory.name)}-${subCategory._id}`
     navigate(url)
   }
 
@@ -63,7 +63,7 @@ const Home = () => {
                     <img
                       src={category.image}
                       alt=""
-                      className='w-full h-full object-scale-down'
+                      className='w-full h-full object-scale-down cursor-pointer'
                     />
                   </div>
                 </div>
