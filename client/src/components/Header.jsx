@@ -8,6 +8,10 @@ import { BsCart4 } from "react-icons/bs";
 import { useSelector } from 'react-redux';
 import { GoTriangleDown, GoTriangleUp } from "react-icons/go"
 import UserMenu from './UserMenu';
+import { useEffect } from 'react';
+import DisplayPriceInRupee from '../utils/DisplayPriceInRupee';
+import { useGlobalContext } from '../provider/GlobalProvider';
+import DisplayCartItem from './DisplayCartItem';
 
 
 
@@ -18,6 +22,11 @@ const Header = () => {
   const navigate = useNavigate()
   const user = useSelector((state) => state?.user)
   const [openUserMenu, setOpenUserMenu] = useState(false)
+  const cartItem = useSelector(state => state.cartItem.cart)
+  // const [totalPrice, setTotalPrice] = useState(0)
+  // const [quantity, setQuantity] = useState(0)
+  const { totalPrice, quantity } = useGlobalContext()
+  const [openCartSection, setOpenCartSection] = useState(false)
 
   const redirectToLoginPage = () => {
     navigate("/login")
@@ -34,6 +43,20 @@ const Header = () => {
     }
     navigate("/user")
   }
+
+  //total item and price
+
+  // useEffect(() => {
+  //   const totalQuantity = cartItem.reduce((prev, currentState) => {
+  //     return prev + currentState.quantity
+  //   }, 0)
+  //   setQuantity(totalQuantity)
+
+  //   const totalPrice = cartItem.reduce((preve,currentValue)=>{
+  //       return preve + (currentValue.productId.price * currentValue.quantity)
+  //   },0)
+  //   setTotalPrice(totalPrice)
+  // }, [cartItem])
 
   return (
     <header className='bg-white h-24 lg:h-20 lg:drop-shadow-md sticky top-0 flex flex-col justify-center gap-1 z-40'>
@@ -104,13 +127,23 @@ const Header = () => {
                     <button onClickCapture={redirectToLoginPage} className='text-lg px-2 hover:text-green-600'>Login</button>
                   )
                 }
-                <button className='flex items-center gap-2 bg-green-800 p-3 rounded text-white hover:bg-green-700'>
+                {/* // cart section  */}
+                <button onClick={() =>setOpenCartSection(true)} className='flex items-center gap-2 bg-green-800 px-3 py-1 rounded text-white hover:bg-green-700'>
                   {/* {add to cart icon} */}
                   <div className='animate-bounce'>
                     <BsCart4 size={25} />
                   </div>
                   <div className='font-semibold'>
-                    <p>My Cart</p>
+                    {
+                      cartItem[0] ? (
+                        <div>
+                          <p>{quantity} <span className='font-normal'>Items</span></p>
+                          <p className='font-normal'>{DisplayPriceInRupee(totalPrice)}</p>
+                        </div>
+                      ) : (
+                        <p>My Cart</p>
+                      )
+                    }
                   </div>
                 </button>
               </div>
@@ -124,6 +157,11 @@ const Header = () => {
       <div className='container mx-auto px-5 lg:hidden'>
         <Search />
       </div>
+      {
+        openCartSection && (
+          <DisplayCartItem close={()=>setOpenCartSection(false)}/>
+        )
+      }
     </header>
   )
 }

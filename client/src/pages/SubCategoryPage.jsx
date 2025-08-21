@@ -158,7 +158,6 @@ const SubCategoryPage = () => {
             {
                 openDeleteConfirmBox && (
                     <ConfirmBox
-                        cancel={() => setOpenDeleteConfirmBox(false)}
                         close={() => setOpenDeleteConfirmBox(false)}
                         confirm={handleDelteSubCategory}
                     />

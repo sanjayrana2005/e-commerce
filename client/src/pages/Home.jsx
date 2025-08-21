@@ -2,7 +2,7 @@ import React from 'react'
 import images from '../assets/images'
 import { useSelector } from 'react-redux'
 import ValideURLConvert from "../utils/ValideURLConvert"
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import CategoryWiseDisplayProduct from '../components/CategoryWiseDisplayProduct'
 
 
@@ -43,6 +43,7 @@ const Home = () => {
         </div>
       </div>
 
+      {/* //categories */}
       <div className='container mx-auto px-4 lg:px-10 my-2 grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-2'>
         {
           loadingCategory ? (
@@ -62,7 +63,7 @@ const Home = () => {
                   <div>
                     <img
                       src={category.image}
-                      alt=""
+                      alt={`${category.name} image`}
                       className='w-full h-full object-scale-down cursor-pointer'
                     />
                   </div>
@@ -80,7 +81,9 @@ const Home = () => {
       {
         categoryData.map((c, index) => {
           return (
-            <CategoryWiseDisplayProduct key={c?._id + "categoryWiseProduct"} id={c?._id} name={c?.name} />
+            <CategoryWiseDisplayProduct key={c?._id + "categoryWiseProduct"} id={c?._id}
+              name={c?.name}
+            />
           )
         })
       }

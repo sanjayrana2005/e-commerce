@@ -11,6 +11,7 @@ const categoryRouter = require("./Routes/categoryRout");
 const uploadRouter = require("./Routes/uploadRoute");
 const subCategoryRouter = require("./Routes/subCategoryRoute");
 const productRouter = require("./Routes/productRoutes");
+const cartRouter = require("./Routes/cartRoutes")
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use("/api/category",categoryRouter)
 app.use("/api/file",uploadRouter)
 app.use("/api/subcategory",subCategoryRouter)
 app.use("/api/product",productRouter)
+app.use("/api/cart",cartRouter)
 
 connectDB()
     .then(() => {

@@ -76,7 +76,7 @@ const verifyEmaiController = async (req, res) => {
             return res.status(400).json({
                 message: error.message || error,
                 error: true,
-                succes: false
+                success: false
             })
         }
         const updateUser = await userModel.updateOne({ _id: code }, {
@@ -85,13 +85,13 @@ const verifyEmaiController = async (req, res) => {
         return res.json({
             message: "verified email",
             error: true,
-            succes: false
+            success: false
         })
     } catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,
-            succes: false
+            success: false
         })
     }
 }
@@ -103,9 +103,9 @@ const loginController = async (req, res) => {
 
         if (!email || !password) {
             return res.status(400).json({
-                message: "provide email or passord",
+                message: "provide email or password",
                 error: true,
-                succes: false
+                success: false
             })
         }
 
@@ -115,7 +115,7 @@ const loginController = async (req, res) => {
             return res.status(400).json({
                 message: "user not registered. Please register",
                 error: true,
-                succes: false
+                success: false
             })
         }
 
@@ -125,7 +125,7 @@ const loginController = async (req, res) => {
             return res.status(400).json({
                 message: "check password or email",
                 error: true,
-                succes: false
+                success: false
             })
         }
 
@@ -164,7 +164,7 @@ const loginController = async (req, res) => {
         return res.status(500).json({
             message: error.message || error,
             error: true,
-            succes: false
+            success: false
         })
     }
 
@@ -197,7 +197,7 @@ const logoutController = async (req, res) => {
         return res.status(500).json({
             message: error.message || error,
             error: true,
-            succes: false
+            success: false
         })
     }
 
@@ -320,7 +320,7 @@ const verifyForgotPasswordOtp = async (req, res) => {
             return res.status(400).json({
                 message: "Provide required field email or OTP",
                 error: true,
-                succes: false
+                success: false
             })
         }
 
@@ -404,7 +404,7 @@ const resetPassword = async (req, res) => {
         const salt = await bcrypt.genSalt(10)
         const hashPassword = await bcrypt.hash(newPassword, salt)
 
-        const update = await userModel.findOneAndUpdate(user._id, {
+        const update = await userModel.findByIdAndUpdate(user._id, {
             password: hashPassword,
         })
 

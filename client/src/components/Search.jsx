@@ -10,6 +10,8 @@ const Search = () => {
     const location = useLocation()
     const [isSearchPage, setIsSearchPage] = useState(false)
     const [isMobile] = useMobie()
+    const params = useLocation()
+    const searchTeaxt = params.search.slice(3)
 
     useEffect(() => {
         const isSearch = location.pathname === "/search";
@@ -19,6 +21,12 @@ const Search = () => {
 
     const redirectToSearchPage = () => {
         navigate("/search")
+    }
+
+    const handleOnChange = (e) => {
+        const value = e.target.value
+        const url = `/search?q=${value}`
+        navigate(url)
     }
 
     return (
@@ -77,6 +85,8 @@ const Search = () => {
                                 placeholder='Search for atta dal and more.'
                                 autoFocus
                                 className='outline-none w-full h-full bg-transparent'
+                                onChange={handleOnChange}
+                                defaultValue={searchTeaxt}
                             />
                         </div>
                     )

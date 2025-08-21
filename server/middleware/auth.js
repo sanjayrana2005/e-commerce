@@ -5,26 +5,26 @@ const auth = async (req, res, next) => {
 
         if (!token) {
             return res.status(401).json({
-                message: "provide token",
-                error:true
-            })
-        }
-
-        const decode = jwt.verify(token, process.env.SECRET_KEY_ACCESS_TOKEN)
-        if(!decode){
-            return res.status(401).json({
-                message:"unauthorizes access",
-                error:true,
+                message: "provide token or login first",
+                error: true,
                 success:false
             })
         }
 
-        req.userId=decode.id;
+        const decode = jwt.verify(token, process.env.SECRET_KEY_ACCESS_TOKEN)
+        if (!decode) {
+            return res.status(401).json({
+                message: "unauthorizes access",
+                error: true,
+                success: false
+            })
+        }
+        req.userId = decode.id;
         next();
-        // console.log("decode", decode);
+
     } catch (error) {
-        return res.status(500).json({
-            message: error.message || error,
+        return res.status(401).json({
+            message: "you have not logged in first login",  
             error: true,
             success: false
         })

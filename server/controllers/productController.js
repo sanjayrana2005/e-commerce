@@ -67,7 +67,7 @@ const getProductController = async (req, res) => {
         } : {}
         const skip = (page - 1) * limit
         const [data, totalCount] = await Promise.all([
-            productModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
+            productModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("category subCategory"),
             productModel.countDocuments(query)
         ])
 
@@ -147,7 +147,7 @@ const getProductByCategoryAndSubCategory = async (req, res) => {
         }
 
         const skip = (page - 1) * limit
-        
+
         const [data, dataCount] = await Promise.all([
             productModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit),
             productModel.countDocuments(query)
@@ -171,26 +171,130 @@ const getProductByCategoryAndSubCategory = async (req, res) => {
     }
 }
 
-const getProductSDetails = async (req,res) => {
+const getProductSDetails = async (req, res) => {
     try {
-        const {productId}=req.body
+        const { productId } = req.body
 
-        const product = await productModel.findOne({_id:productId})
+        const product = await productModel.findOne({ _id: productId })
 
         return res.json({
-            message : "product details",
-            data:product,
-            error:false,
-            success:true,
+            message: "product details",
+            data: product,
+            error: false,
+            success: true,
         })
-        
+
     } catch (error) {
         return res.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
+            message: error.message || error,
+            error: true,
+            success: false
         })
     }
 }
 
-module.exports = { createProductController, getProductController, getProductByCategory, getProductByCategoryAndSubCategory,getProductSDetails }
+const updateProduct = async (req, res) => {
+    try {
+        const { _id } = req.body
+        if (!_id) {
+            return res.status(400).json({
+                message: "Provide product _id",
+                error: true,
+                success: false
+            })
+        }
+        const updateProduct = await productModel.updateOne({ _id: _id }, {
+            ...req.body
+        })
+
+        return res.json({
+            message: "updated successfully",
+            data: updateProduct,
+            error: false,
+            success: true
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+const deleteProduct = async (req, res) => {
+    try {
+        const { _id } = req.body
+
+        if (!_id) {
+            return res.status(400).json({
+                message: "Provide _id",
+                error: true,
+                success: false
+            })
+        }
+
+        const deleteProduct = await productModel.deleteOne({ _id: _id })
+
+        return res.json({
+            message: "Deleted Successfully",
+            error: false,
+            success: true,
+            data: deleteProduct
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: true
+        })
+    }
+}
+
+const searchProduct = async (req, res) => {
+    try {
+
+        let { search, page, limit } = req.body
+
+        if (!page) {
+            page = 1
+        }
+        if (!limit) {
+            limit = 10
+        }
+
+        const query = search ? {
+            $text: {
+                $search: search
+            }
+        } :{}
+
+        const skip = (page-1)*limit
+
+        const [data,dataCount] = await Promise.all([
+            productModel.find(query).sort({createdAt : -1}).skip(skip).limit(limit).populate("category subCategory"),
+            productModel.countDocuments(query) 
+        ])
+
+        return res.json({
+            message:"Product Data",
+            error : false,
+            success:true,
+            data:data,
+            totalCount:dataCount,
+            totalPage:Math.ceil(dataCount/limit),
+            page:page,
+            limit:limit
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+module.exports = { createProductController, getProductController, getProductByCategory, getProductByCategoryAndSubCategory, getProductSDetails, updateProduct, deleteProduct,searchProduct }

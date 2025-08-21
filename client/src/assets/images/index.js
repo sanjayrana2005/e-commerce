@@ -6,6 +6,7 @@ import minuteDelivery from "../images/minute_delivery.png"
 import bestPrice from "../images/Best_Prices_Offers.png"
 import wideDinkeyit from "../images/Wide_Assortment.png"
 
+
 const images = {
     logo,
     noDataImage,
@@ -13,7 +14,7 @@ const images = {
     mobileBanner,
     minuteDelivery,
     bestPrice,
-    wideDinkeyit
+    wideDinkeyit,
 }
 
 export default images

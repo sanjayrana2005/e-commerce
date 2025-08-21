@@ -106,11 +106,11 @@ const ProductPage = () => {
       <div className='p-4
       bg-blue-50'>
         <div className='min-h-[56vh]'>
-          <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4'>
+          <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 XL1444:grid-cols-6 gap-4'>
             {
               productData.map((product, index) => {
                 return (
-                  <ProductCard key={product._id || index} data={product} />
+                  <ProductCard key={product._id || index} data={product} fetchProductData={fetchProductData} />
                 )
               })
             }

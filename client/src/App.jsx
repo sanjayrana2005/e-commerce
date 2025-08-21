@@ -10,11 +10,14 @@ import { setUserDetails } from './store/userSlice';
 import { useDispatch } from 'react-redux';
 import SummaryApi from './common/summaryApi';
 import Axios from './utils/Axios';
-import { setAllCategory,setAllSubCategory, setLoadingCategory } from './store/productSlice';
+import { setAllCategory, setAllSubCategory, setLoadingCategory } from './store/productSlice';
+import GlobalProvider from './provider/GlobalProvider';
+import CartMobileLink from './components/CartMobileLink';
 
 function App() {
 
   const dispatch = useDispatch()
+  
 
   const fetchUser = async () => {
     const userData = await fetchUserDetails()
@@ -55,24 +58,29 @@ function App() {
     }
   }
 
+
+
   useEffect(() => {
     fetchUser()
     fetchCategory()
     fetchSubCategory()
+    // fetchCartItem()
   }, [])
 
-  return (<>
-    <Header />
-    <main className='min-h-[78vh]'>
-      <Outlet />
-      {/* <Home /> */}
-    </main>
-    <Footer />
-    <Toaster
-      position="top-right"
-      containerStyle={{ top: '82px' }}
-    />
-  </>
+  return (
+    <GlobalProvider>
+      <Header />
+      <main className='min-h-[78vh]'>
+        <Outlet />
+        {/* <Home /> */}
+      </main>
+      <Footer />
+      <Toaster
+        position="top-right"
+        containerStyle={{ top: '82px' }}
+      />
+      <CartMobileLink/>
+    </GlobalProvider>
   )
 }
 

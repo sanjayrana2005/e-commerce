@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate,useLocation } from 'react-router-dom'
 import Divider from './Divider'
 import Axios from "../utils/Axios"
 import SummaryApi from '../common/summaryApi'
@@ -15,6 +15,7 @@ const UserMenu = ({ close }) => {
     const user = useSelector((state) => state.user)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const locaion = useLocation()
 
     const handleLogout = async () => {
         try {
@@ -42,6 +43,9 @@ const UserMenu = ({ close }) => {
             close()
         }
     }
+
+    const path  = location.pathname 
+    
     return (
         <div>
             <div className='font-medium'>My Account</div>
@@ -57,32 +61,33 @@ const UserMenu = ({ close }) => {
             <Divider />
 
             <div className='text-sm grid gap-1 px-2'>
+            {/* linkClass("/dashboard/category") */}
 
                 {
-                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/category"} className='hover:bg-orange-200 py-1 px-2'>
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/category"} className={path == "/dashboard/category" ? "bg-green-100 hover:bg-orange-200 px-2 py-1":"hover:bg-orange-200 py-1 px-2" }>
                         Category
                     </Link>)
                 }
                 {
-                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/sub-category"} className='hover:bg-orange-200 py-1 px-2'>
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/sub-category"} className={path == "/dashboard/sub-category" ? "bg-green-100 hover:bg-orange-200 px-2 py-1":"hover:bg-orange-200 py-1 px-2" }>
                         Sub category
                     </Link>)
                 }
                 {
-                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/upload-product"} className='hover:bg-orange-200 py-1 px-2'>
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/upload-product"} className={path == "/dashboard/upload-product" ? "bg-green-100 hover:bg-orange-200 px-2 py-1":"hover:bg-orange-200 py-1 px-2" }>
                         Upload product
                     </Link>)
                 }
                 {
-                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/product"} className='hover:bg-orange-200 py-1 px-2'>
+                    isAdmin(user.role) && (<Link onClick={handleClose} to={"/dashboard/product"} className={path == "/dashboard/product" ? "bg-green-100 hover:bg-orange-200 px-2 py-1":"hover:bg-orange-200 py-1 px-2" }>
                         Product
                     </Link>)
                 }
 
-                <Link onClick={handleClose} to={"/dashboard/myorder"} className='hover:bg-orange-200 py-1 px-2'>
+                <Link onClick={handleClose} to={"/dashboard/myorder"} className={path == "/dashboard/myorder" ? "bg-green-100 hover:bg-orange-200 px-2 py-1":"hover:bg-orange-200 py-1 px-2" }>
                     My Order
                 </Link>
-                <Link onClick={handleClose} to={"/dashboard/address"} className='hover:bg-orange-200 py-1 px-2'>
+                <Link onClick={handleClose} to={"/dashboard/address"} className={path == "/dashboard/address" ? "bg-green-100 hover:bg-orange-200 px-2 py-1":"hover:bg-orange-200 py-1 px-2" }>
                     Saved Address
                 </Link>
                 <button onClick={handleLogout} className='text-left hover:bg-orange-200 py-1 px-2'>
