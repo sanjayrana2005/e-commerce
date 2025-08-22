@@ -96,7 +96,7 @@ const updateCartItemQuantityController = async (req, res) => {
         })
 
         return res.json({
-            message: "Item added",
+            message: "Updated cart",
             error: false,
             success: true,
             data: updateCartItem

@@ -17,6 +17,7 @@ const GlobalProvider = ({ children }) => {
     const dispatch = useDispatch()
     const cartItem = useSelector(state => state.cartItem.cart)
     const [totalPrice, setTotalPrice] = useState(0)
+    const [notDiscountTotalPrice,setNotDiscountTotalPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
 
     const fetchCartItem = async () => {
@@ -48,11 +49,13 @@ const GlobalProvider = ({ children }) => {
             const { data: responseData } = response
 
             if (responseData.success) {
-                toast.success(responseData.message)
+                // toast.success(responseData.message)
                 fetchCartItem()
+                return responseData
             }
         } catch (error) {
             AxiosToastError(error)
+            return error
         }
     }
 
@@ -88,9 +91,14 @@ const GlobalProvider = ({ children }) => {
         const totalPrice = cartItem.reduce((preve, currentValue) => {
             // const priceAfterDiscount = priceWithDiscount(currentValue.productId.price,currentValue.productId.discount)
 
-            return preve + (priceWithDiscount(currentValue.productId.price,currentValue.productId.discount) * currentValue.quantity)
+            return preve + (priceWithDiscount(currentValue?.productId?.price,currentValue?.productId?.discount) * currentValue.quantity)
         }, 0)
         setTotalPrice(totalPrice)
+
+        const notDiscountPrice = cartItem.reduce((preve,currentValue)=>{
+            return preve + (currentValue?.productId?.price * currentValue.quantity)
+        },0)
+        setNotDiscountTotalPrice(notDiscountPrice)
     }, [cartItem])
 
     return (
@@ -99,7 +107,8 @@ const GlobalProvider = ({ children }) => {
             updateCartQuantity,
             deleteCartItem,
             totalPrice,
-            quantity
+            quantity,
+            notDiscountTotalPrice
         }}>
             {children}
         </GlobalContext.Provider>

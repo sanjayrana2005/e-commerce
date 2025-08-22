@@ -53,17 +53,25 @@ const AddToCartButton = ({ data }) => {
         setCartItemDeatails(product)
     }, [data, cartItem])
 
-    const increaseQuantity = (e) => {
+    const increaseQuantity = async (e) => {
         e.preventDefault()
-        updateCartQuantity(cartItemDetails?._id, quantity + 1)
+       const response = await updateCartQuantity(cartItemDetails?._id, quantity + 1)
+
+       if(response.success){
+        toast.success("Item added")
+       }
     }
-    const decreaseQuantity = (e) => {
+    const decreaseQuantity =async (e) => {
         e.preventDefault()
         if(quantity===1){
             deleteCartItem(cartItemDetails?._id)
         }else{
 
-            updateCartQuantity(cartItemDetails?._id, quantity - 1)
+          const response = await  updateCartQuantity(cartItemDetails?._id, quantity - 1)
+
+          if(response.success){
+        toast.success("Item removed")
+       }
         }
     }
 
