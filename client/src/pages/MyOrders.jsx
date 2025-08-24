@@ -5,7 +5,6 @@ import DisplayPriceInRupee from '../utils/DisplayPriceInRupee'
 
 const MyOrders = () => {
   const orders = useSelector(state => state.orders.order)
- console.log(`Orders`, orders[0]);
 
   return (
     <section>
