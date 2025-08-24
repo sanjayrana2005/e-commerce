@@ -156,7 +156,6 @@ const getOrderProductItems = async (
 
 const webhookStripe = async (req, res) => {
     const event = req.body
-    console.log("event data", event)
     const endPointSeceret = process.env.STRIPE_ENDPOINT_WEBHOOK_SECERET_KEY
     // Handle the event
     switch (event.type) {
