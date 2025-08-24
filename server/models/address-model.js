@@ -6,7 +6,7 @@ const addressSchema = mongoose.Schema({
         default: ""
     },
     city: {
-        String,
+        type:String,
         default: ""
     },
     state: {
@@ -14,7 +14,8 @@ const addressSchema = mongoose.Schema({
         default: ""
     },
     pincode: {
-        type: Number
+        type: Number,
+        default:""
     },
     country: {
         type: String
@@ -23,9 +24,13 @@ const addressSchema = mongoose.Schema({
         type: Number,
         default: null
     },
-    stauts:{
+    status:{
         type:Boolean,
         default:true
+    },
+    userId:{
+        type:mongoose.Schema.ObjectId,
+        default:""
     }
 }, {
     timestamps: true

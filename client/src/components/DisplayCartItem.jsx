@@ -1,6 +1,6 @@
 import React from 'react'
 import { IoClose } from 'react-icons/io5'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useGlobalContext } from '../provider/GlobalProvider'
 import DisplayPriceInRupee from '../utils/DisplayPriceInRupee'
 import { FaCaretRight } from 'react-icons/fa'
@@ -8,10 +8,25 @@ import { useSelector } from 'react-redux'
 import AddToCartButton from './AddToCartButton'
 import priceWithDiscount from '../utils/PriceWithDiscount'
 import images from "../assets/images/index"
+import toast from 'react-hot-toast'
 
 const DisplayCartItem = ({ close }) => {
     const { notDiscountTotalPrice, totalPrice,quantity } = useGlobalContext()
     const cartItem = useSelector(state => state.cartItem.cart)
+
+    const user = useSelector(state=>state.user)
+    const navigate = useNavigate()
+
+    const redirectToCheckOut = () => {
+        if(user?._id){
+            navigate("/checkout")
+            if(close){
+                close()
+            }
+            return
+        }
+        toast("Please Login")
+    }
 
     return (
         <section className='bg-neutral-900 fixed bottom-0 top-0 left-0 right-0 bg-opacity-60 h-screen z-50'>
@@ -41,7 +56,7 @@ const DisplayCartItem = ({ close }) => {
                                         cartItem[0] && (
                                             cartItem.map((item, index) => {
                                                 return (
-                                                    <div className='flex items-center gap-2'>
+                                                    <div key={item._id+"cartItemDisplay"}  className='flex items-center gap-2'>
                                                         <div className='w-16 h-16 min-h-16 min-w-16 border rounded '>
                                                             <img src={item?.productId?.image[0]} alt="product image"
                                                                 className='object-scale-down' />
@@ -60,7 +75,7 @@ const DisplayCartItem = ({ close }) => {
                                         )
                                     }
                                 </div>
-
+                                    {/* bill details  */}
                                 <div className='bg-white p-3 rounded'>
                                 <h3 className='font-medium'>Bill details</h3>
                                 <div className='flex justify-between ml-1'>
@@ -98,7 +113,8 @@ const DisplayCartItem = ({ close }) => {
                                 <div>
                                     {DisplayPriceInRupee(totalPrice)}
                                 </div>
-                                <button className='flex items-center gap-1'>
+                                
+                                <button onClick={redirectToCheckOut} className='flex items-center gap-1'>
                                     Proceed
                                     <span><FaCaretRight /></span>
                                 </button>

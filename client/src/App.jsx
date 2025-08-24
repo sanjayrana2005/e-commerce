@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import './App.css'
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -17,6 +17,7 @@ import CartMobileLink from './components/CartMobileLink';
 function App() {
 
   const dispatch = useDispatch()
+  const location = useLocation()
   
 
   const fetchUser = async () => {
@@ -79,7 +80,11 @@ function App() {
         position="top-right"
         containerStyle={{ top: '82px' }}
       />
+      {
+        location.pathname !== "/checkout" && (
       <CartMobileLink/>
+        )
+      }
     </GlobalProvider>
   )
 }

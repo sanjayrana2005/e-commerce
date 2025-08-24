@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import AxiosToastError from "../utils/AxiosToastError";
 import toast from "react-hot-toast";
 import priceWithDiscount from "../utils/PriceWithDiscount";
+import { handleAddAddress } from "../store/addressSlice";
+import { handleOrder } from "../store/orderSlice";
 
 export const GlobalContext = createContext(null)
 
@@ -19,6 +21,7 @@ const GlobalProvider = ({ children }) => {
     const [totalPrice, setTotalPrice] = useState(0)
     const [notDiscountTotalPrice,setNotDiscountTotalPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
+    const user = useSelector(state => state?.user)
 
     const fetchCartItem = async () => {
         try {
@@ -78,9 +81,36 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
-    useEffect(() => {
-        fetchCartItem()
-    }, [])
+    const fetchOrder = async ()=>{
+        try {
+            const response = await Axios({
+                ...SummaryApi.getOrderItems
+            })
+            const {data:responseData} = response
+
+            if(responseData.success){
+                dispatch(handleOrder(responseData.data))
+            }
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
+
+       const fetchAddress =async  () =>{
+        try {
+            const response = await Axios({
+                ...SummaryApi.getAddress
+            })
+            const {data:responseData}=response
+
+            if(responseData.success){
+                dispatch(handleAddAddress(responseData.data))
+            }
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
+
 
     useEffect(() => {
         const totalQuantity = cartItem.reduce((prev, currentState) => {
@@ -101,14 +131,30 @@ const GlobalProvider = ({ children }) => {
         setNotDiscountTotalPrice(notDiscountPrice)
     }, [cartItem])
 
+    const handleLogOut = () => {
+        localStorage.clear()
+        dispatch(handleAddItemCart([]))
+    }
+
+ 
+    
+    useEffect(() => {
+        fetchCartItem()
+        handleLogOut()
+        fetchAddress()
+        fetchOrder()
+    }, [user])
+
     return (
         <GlobalContext.Provider value={{
             fetchCartItem,
             updateCartQuantity,
             deleteCartItem,
+            fetchAddress,
             totalPrice,
             quantity,
-            notDiscountTotalPrice
+            notDiscountTotalPrice,
+            fetchOrder
         }}>
             {children}
         </GlobalContext.Provider>

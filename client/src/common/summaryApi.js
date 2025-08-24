@@ -1,4 +1,4 @@
-export const baseURL = "http://localhost:8000"
+export const baseURL = import.meta.env.VITE_API_URL
 
 const SummaryApi = {
     register: {
@@ -124,6 +124,34 @@ const SummaryApi = {
     deleteCartItem : {
         url:"/api/cart/delete-cart-item",
         method:"DELETE"
+    },
+    createAddress : {
+        url:"/api/address/create",
+        method:"POST"
+    },
+    getAddress:{
+        url:"/api/address/get",
+        method:"GET"
+    },
+    updateAddress:{
+        url:"/api/address/update",
+        method:"PUT"
+    },
+    disableAddress:{
+        url:"/api/address/disable",
+        method:"DELETE"
+    },
+    cashOnDelivery:{
+        url:"/api/order/cash-on-delivery",
+        method:"POST"
+    },
+    payment_url : {
+        url:"/api/order/checkout",
+        method:"POST"
+    },
+    getOrderItems: {
+        url:"/api/order/order-list",
+        method:"GET"
     }
     
     
