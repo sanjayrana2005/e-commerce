@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 
 
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res) => {  
     try {
         const { name, email, password } = req.body;
 
@@ -52,6 +52,7 @@ const registerUser = async (req, res) => {
                 url: verifyEmailURL
             })
         })
+
         return res.json({
             message: "User registered successfully",
             error: false,
@@ -135,6 +136,7 @@ const loginController = async (req, res) => {
         const updateUser = await userModel.findByIdAndUpdate(user?._id,{
             last_login_date : new Date()
         })
+        
         const cookieOption = {
             httpOnly: true,
             secure: true,
