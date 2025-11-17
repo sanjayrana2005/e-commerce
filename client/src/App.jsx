@@ -18,10 +18,11 @@ function App() {
 
   const dispatch = useDispatch()
   const location = useLocation()
-  
+
 
   const fetchUser = async () => {
     const userData = await fetchUserDetails()
+    if(!userData) return;
     dispatch(setUserDetails(userData.data))
   }
 
@@ -34,9 +35,11 @@ function App() {
       const { data: responseData } = response
       if (responseData.success) {
         dispatch(setAllCategory(responseData.data))
-
       }
     } catch (error) {
+      if (error.response?.status === 401) {
+        return null;
+      }
       return error
     }
     finally {
@@ -55,6 +58,9 @@ function App() {
 
       }
     } catch (error) {
+      if (error.response?.status === 401) {
+        return null;
+      }
       return error
     }
   }
@@ -62,9 +68,12 @@ function App() {
 
 
   useEffect(() => {
-    fetchUser()
-    fetchCategory()
+     fetchCategory()
     fetchSubCategory()
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetchUser()
+   
     // fetchCartItem()
   }, [])
 
@@ -82,7 +91,7 @@ function App() {
       />
       {
         location.pathname !== "/checkout" && (
-      <CartMobileLink/>
+          <CartMobileLink />
         )
       }
     </GlobalProvider>

@@ -7,6 +7,8 @@ const fetchUserDetails = async () => {
             ...SummaryApi.userDetails
         })
         return response.data
+
+
     } catch (error) {
         return error
     }

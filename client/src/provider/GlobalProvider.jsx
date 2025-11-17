@@ -19,7 +19,7 @@ const GlobalProvider = ({ children }) => {
     const dispatch = useDispatch()
     const cartItem = useSelector(state => state.cartItem.cart)
     const [totalPrice, setTotalPrice] = useState(0)
-    const [notDiscountTotalPrice,setNotDiscountTotalPrice] = useState(0)
+    const [notDiscountTotalPrice, setNotDiscountTotalPrice] = useState(0)
     const [quantity, setQuantity] = useState(0)
     const user = useSelector(state => state?.user)
 
@@ -81,14 +81,14 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
-    const fetchOrder = async ()=>{
+    const fetchOrder = async () => {
         try {
             const response = await Axios({
                 ...SummaryApi.getOrderItems
             })
-            const {data:responseData} = response
+            const { data: responseData } = response
 
-            if(responseData.success){
+            if (responseData.success) {
                 dispatch(handleOrder(responseData.data))
             }
         } catch (error) {
@@ -96,14 +96,14 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
-       const fetchAddress =async  () =>{
+    const fetchAddress = async () => {
         try {
             const response = await Axios({
                 ...SummaryApi.getAddress
             })
-            const {data:responseData}=response
+            const { data: responseData } = response
 
-            if(responseData.success){
+            if (responseData.success) {
                 dispatch(handleAddAddress(responseData.data))
             }
         } catch (error) {
@@ -121,13 +121,13 @@ const GlobalProvider = ({ children }) => {
         const totalPrice = cartItem.reduce((preve, currentValue) => {
             // const priceAfterDiscount = priceWithDiscount(currentValue.productId.price,currentValue.productId.discount)
 
-            return preve + (priceWithDiscount(currentValue?.productId?.price,currentValue?.productId?.discount) * currentValue.quantity)
+            return preve + (priceWithDiscount(currentValue?.productId?.price, currentValue?.productId?.discount) * currentValue.quantity)
         }, 0)
         setTotalPrice(totalPrice)
 
-        const notDiscountPrice = cartItem.reduce((preve,currentValue)=>{
+        const notDiscountPrice = cartItem.reduce((preve, currentValue) => {
             return preve + (currentValue?.productId?.price * currentValue.quantity)
-        },0)
+        }, 0)
         setNotDiscountTotalPrice(notDiscountPrice)
     }, [cartItem])
 
@@ -136,11 +136,13 @@ const GlobalProvider = ({ children }) => {
         dispatch(handleAddItemCart([]))
     }
 
- 
-    
+
+
     useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+        
         fetchCartItem()
-        handleLogOut()
         fetchAddress()
         fetchOrder()
     }, [user])
