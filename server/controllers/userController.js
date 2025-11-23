@@ -51,13 +51,32 @@ const registerUser = async (req, res) => {
                 name,
                 url: verifyEmailURL
             })
-        })
+        });
+
+        const accesstoken = await generateAccessToken(newUser._id);
+        const refreshtoken = await generateRefreshToken(newUser._id);
+
+        const updateUser = await userModel.findByIdAndUpdate(newUser?._id,{
+            last_login_date : new Date()
+        });
+        
+        const cookieOption = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        }
+        res.cookie("accessToken", accesstoken, cookieOption);
+        res.cookie("refreshToken", refreshtoken, cookieOption);
 
         return res.json({
             message: "User registered successfully",
             error: false,
             success: true,
-            data: newUser
+            data: {
+                newUser,
+                accesstoken,
+                refreshtoken,
+            }
         })
     } catch (error) {
         return res.status(500).json({
@@ -142,8 +161,8 @@ const loginController = async (req, res) => {
             secure: true,
             sameSite: "None"
         }
-        res.cookie("accessToken", accesstoken, cookieOption)
-        res.cookie("refreshToken", refreshtoken, cookieOption)
+        res.cookie("accessToken", accesstoken, cookieOption);
+        res.cookie("refreshToken", refreshtoken, cookieOption);
 
         return res.json({
             message: "login successfuly",

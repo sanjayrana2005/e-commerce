@@ -7,6 +7,9 @@ import SummaryApi from '../common/summaryApi';
 import AxiosToastError from '../utils/AxiosToastError';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import fetchUserDetails from '../utils/fetchUserDetails';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../store/userSlice';
 
 
 const Register = () => {
@@ -20,6 +23,7 @@ const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -54,9 +58,10 @@ const Register = () => {
       }
       if (response.data.success) {
         toast.success(response.data.message)
-        if (response.data.token) {
-          localStorage.setItem("token", response.data.token);
-        }
+        localStorage.setItem("accesstoken",response.data.data.accesstoken);
+        localStorage.setItem("refreshtoken",response.data.data.refreshtoken);
+        const userDetails = await fetchUserDetails()
+        dispatch(setUserDetails(userDetails.data))
 
         setData({
           name: "",
@@ -64,10 +69,12 @@ const Register = () => {
           password: "",
           confirmPassword: ""
         })
-        navigate("/login")
+        navigate("/")
       }
 
     } catch (error) {
+      console.log(error);
+      
       AxiosToastError(error)
     }
 
