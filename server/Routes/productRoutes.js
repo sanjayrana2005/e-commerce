@@ -5,7 +5,7 @@ const admin = require("../middleware/Admin")
 
 const productRouter = express.Router()
 
-productRouter.post("/create",auth,createProductController)
+productRouter.post("/create",auth,admin,createProductController)
 productRouter.post("/get",getProductController)
 productRouter.post("/get-product-by-category",getProductByCategory)
 productRouter.post("/get-product-by-category-and-subcategory",getProductByCategoryAndSubCategory)
